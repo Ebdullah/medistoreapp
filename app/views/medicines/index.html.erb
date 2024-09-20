@@ -1,0 +1,50 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Medistore</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link active" aria-current="page" href="#">Home</a>
+        <a class="nav-link" href="#">About</a>
+        <a class="nav-link" href="#">Contact</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+
+
+<%# ----------------------------------------------------------------------------- %>
+<h1>Medicines</h1>
+
+<%= link_to 'New Medicine', new_branch_medicine_path(@branch), class: 'btn btn-primary mb-3' %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Price</th>
+      <th>Quantity</th>
+      <th>Expiry Date</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @medicines.each do |medicine| %>
+      <tr>
+        <td><%= medicine.name %></td>
+        <td><%= medicine.price %></td>
+        <td><%= medicine.stock_quantity %></td>
+        <td><%= medicine.expiry_date %></td>
+        <td style="display: flex">
+          <%= link_to 'Show', branch_medicine_path(@branch, medicine), class: 'btn btn-info btn-sm' %>
+          <%= link_to 'Edit', edit_branch_medicine_path(@branch, medicine), class: 'btn btn-warning btn-sm' %>
+          <%= link_to 'Destroy', branch_medicine_path(@branch, medicine), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

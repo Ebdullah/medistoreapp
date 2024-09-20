@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  requesting_branch: one
+  receiving_branch: one
+  status: 1
+  medicines: 
+
+two:
+  requesting_branch: two
+  receiving_branch: two
+  status: 1
+  medicines: 

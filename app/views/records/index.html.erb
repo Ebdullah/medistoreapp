@@ -1,0 +1,44 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Medistore</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link active" aria-current="page" href="#">Home</a>
+        <a class="nav-link" href="#">About</a>
+        <a class="nav-link" href="#">Contact</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<h1>Records</h1>
+
+<%= link_to 'Create Bill', new_branch_record_path(@branch), class: 'btn btn-primary mb-3' %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Customer</th>
+      <th>Total Amount</th>
+      <th>Payment Method</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @records.each do |record| %>
+      <tr>
+        <td><%= record.customer.name %></td>
+        <td><%= number_to_currency(record.total_amount) %></td>
+        <td><%= record.payment_method %></td>
+        <td style="display: flex">
+          <%= link_to 'Show', branch_record_path(@branch, record), class: 'btn btn-info btn-sm' %>
+          <%= link_to 'Edit', edit_branch_record_path(@branch, record), class: 'btn btn-warning btn-sm' %>
+          <%= link_to 'Destroy', branch_record_path(@branch, record), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

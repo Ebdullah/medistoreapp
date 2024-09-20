@@ -1,0 +1,92 @@
+<%= form_with model: [@branch, @record], local: true, class: 'p-4' do |form| %>
+  <!-- Section 1: Customer, Cashier, Payment Method -->
+  <div class="mb-4 p-3 border rounded bg-light">
+    <h5 class="mb-3">Billing Details</h5>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <%= form.label :cashier_id, class: 'form-label' %>
+        <%= form.collection_select :cashier_id, User.where(role: :cashier), :id, :name, {}, class: 'form-select' %>
+      </div>
+
+      <div class="col-md-6">
+        <%= form.label :payment_method, class: 'form-label' %>
+        <%= form.select :payment_method, Record.payment_methods.keys.map { |w| [w.titleize, w] }, {}, class: 'form-select' %>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <%= form.label :customer_name, class: 'form-label' %>
+        <%= form.text_field :customer_name, class: 'form-control' %>
+      </div>
+
+      <div class="col-md-6">
+        <%= form.label :customer_phone, class: 'form-label' %>
+        <%= form.text_field :customer_phone, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Medicines and Total Price -->
+  <div class="p-3 border rounded bg-light">
+    <h5 class="mb-3">Medicine Details</h5>
+
+    <div id="medicines-fields">
+      <%= form.fields_for :record_items do |item| %>
+        <div class="medicine-fields row mb-3">
+          <div class="col-md-4">
+            <%= item.label :medicine_id, class: 'form-label' %>
+            <%= item.collection_select :medicine_id, Medicine.all, :id, :name, {}, class: 'form-select' %>
+          </div>
+
+          <div class="col-md-4">
+            <%= item.label :quantity, class: 'form-label' %>
+            <%= item.number_field :quantity, class: 'form-control' %>
+          </div>
+
+          <div class="col-md-4">
+            <%= item.label :price, class: 'form-label' %>
+            <%= item.number_field :price, class: 'form-control' %>
+          </div>
+
+          <div class="col-md-12 mt-2">
+            <button type="button" class="btn btn-danger remove-medicine">Remove</button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="form-group">
+      <button type="button" class="btn btn-primary" id="add-medicine">Add Medicine</button>
+    </div>
+
+    <div class="form-group mt-4">
+      <%= form.submit 'Create Bill', class: 'btn btn-dark w-100' %>
+    </div>
+  </div>
+
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const addMedicineButton = document.getElementById('add-medicine');
+      const medicinesContainer = document.getElementById('medicines-fields');
+
+      addMedicineButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        const fields = document.querySelector('.medicine-fields');
+        const newFields = fields.cloneNode(true);
+        newFields.querySelectorAll('input').forEach(input => input.value = '');
+        newFields.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+        medicinesContainer.appendChild(newFields);
+      });
+
+      medicinesContainer.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-medicine')) {
+          e.target.closest('.medicine-fields').remove();
+        }
+      });
+    });
+  </script>
+<% end %>

@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  cashier: one
+  record: one
+  medicine: one
+  quantity_sold: 1
+  total_amount: 9.99
+  audited_from: 2024-09-18 12:13:08
+  audited_to: 2024-09-18 12:13:08
+
+two:
+  cashier: two
+  record: two
+  medicine: two
+  quantity_sold: 1
+  total_amount: 9.99
+  audited_from: 2024-09-18 12:13:08
+  audited_to: 2024-09-18 12:13:08

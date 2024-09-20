@@ -1,0 +1,56 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <!-- Invoice Header -->
+      <div class="card mb-4">
+        <div class="card-header bg-dark text-white">
+          <h1 class="card-title mb-0">Billing Details</h1>
+        </div>
+        <div class="card-body">
+          <h3 class="mb-4"><%= @record.customer.name %></h3>
+
+          <!-- Total Amount and Payment Method -->
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <p><strong>Total Amount:</strong></p>
+              <h4 class="text-success"><%= number_to_currency(@record.total_amount) %></h4>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Payment Method:</strong></p>
+              <h4><%= @record.payment_method %></h4>
+            </div>
+          </div>
+
+          <!-- Items Table -->
+          <h2 class="mb-4">Items</h2>
+          <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+              <tr>
+                <th>Medicine</th>
+                <th>Quantity</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @record.record_items.each do |item| %>
+                <tr>
+                  <td><%= item.medicine.name %></td>
+                  <td><%= item.quantity %></td>
+                  <td><%= number_to_currency(item.price) %></td>
+                  <td>Total: <%= item.quantity * item.price %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+
+          <!-- Buttons -->
+          <div class="mt-4">
+            <%= link_to 'Back', branch_records_path(@branch), class: 'btn btn-secondary' %>
+            <%= link_to 'Edit', edit_branch_record_path(@branch, @record), class: 'btn btn-warning' %>
+            <%= link_to 'Destroy', branch_record_path(@branch, @record), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

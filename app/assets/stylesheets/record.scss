@@ -1,0 +1,38 @@
+body {
+    background: url('path/to/your/background-image.jpg') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    height: 100vh; /* Full viewport height */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .navbar {
+    z-index: 1;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Prevent scrolling */
+    height: calc(100vh - 56px); /* Adjust for navbar height if needed */
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .form-container {
+    width: 100%;
+    max-width: 800px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 2rem; /* Added padding for spacing */
+    box-sizing: border-box;
+  }
+  
+  .form-container h1 {
+    font-size: 2rem;
+    color: #343a40;
+  }
