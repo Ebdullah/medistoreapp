@@ -46,8 +46,10 @@ gem 'devise', '~> 4.9'
 gem 'bootstrap', '~>5.3.3'
 gem 'pry'
 
-gem 'sassc-rails'
-gem 'bootstrap-sass'
+gem 'sassc-rails', '~> 2.1'
+# gem 'dartsass-rails'
+
+# gem 'bootstrap-sass'
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 

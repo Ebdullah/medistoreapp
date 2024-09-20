@@ -11,7 +11,7 @@
 
       <div class="col-md-6">
         <%= form.label :payment_method, class: 'form-label' %>
-        <%= form.select :payment_method, Record.payment_methods.keys.map { |w| [w.titleize, w] }, {}, class: 'form-select' %>
+        <%= form.select :payment_method, Record.payment_methods.keys.map { |w| [w.titleize, w] }, {prompt: "Payment Method"}, class: 'form-select' %>
       </div>
     </div>
 
@@ -37,7 +37,7 @@
         <div class="medicine-fields row mb-3">
           <div class="col-md-4">
             <%= item.label :medicine_id, class: 'form-label' %>
-            <%= item.collection_select :medicine_id, Medicine.all, :id, :name, {}, class: 'form-select' %>
+            <%= item.select :medicine_id, Medicine.all.pluck(:name,:id), {prompt: "Select Medicine"}, class: 'form-select select2-medicine' %>
           </div>
 
           <div class="col-md-4">

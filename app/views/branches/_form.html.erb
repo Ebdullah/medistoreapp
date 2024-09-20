@@ -1,16 +1,25 @@
-<%= form_with model: branch do |form| %>
-  <div class="form-group">
-    <%= form.label :name %>
-    <%= form.text_field :name, class: 'form-control' %>
-  </div>
+<div class="container mt-4">
+  <div class="row justify-content-center"> <!-- Center the card horizontally -->
+    <div class="col-md-6 mb-5"> <!-- Add margin-bottom to the column -->
+      <div class="card shadow p-4"> 
+        <h2 class="text-center mb-4">Branch Form</h2> 
 
-  <div class="form-group mt-3">
-    <%= form.label :location %>
-    <%= form.text_field :location, class: 'form-control' %>
-  </div>
+        <%= form_with model: branch do |form| %>
+          <div class="form-group mb-3">
+            <%= form.label :name %>
+            <%= form.text_field :name, class: 'form-control' %>
+          </div>
 
+          <div class="form-group mb-3">
+            <%= form.label :location %>
+            <%= form.text_field :location, class: 'form-control' %>
+          </div>
 
-  <div class="form-group mt-4">
-    <%= form.submit class: 'btn btn-primary' %>
+          <div class="d-flex justify-content-center mt-4"> <!-- Center the submit button -->
+            <%= form.submit 'Save', class: 'btn btn-dark px-5 py-2' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
-<% end %>
+</div>
