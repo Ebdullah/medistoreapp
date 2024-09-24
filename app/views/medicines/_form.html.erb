@@ -1,30 +1,42 @@
-<%= form_with model: [@branch,medicine] do |form| %>
-  <div class="form-group"></div>
-    <%= form.label :name %>
-    <%= form.text_field :name, class: 'form-control' %>
-  </div>
+<div class="container mt-4">
+  <div class="row justify-content-center"> <!-- Center the card horizontally -->
+    <div class="col-md-6 mb-5"> <!-- Add margin-bottom to the column -->
+      <div class="card shadow p-4"> 
+        <h2 class="text-center mb-4">Medicine Form</h2> 
 
-  <div class="form-group mt-3">
-    <%= form.label :description %>
-    <%= form.text_field :description, class: 'form-control' %>
-  </div>
+        <%= form_with model: [@branch, medicine] do |form| %>
+          <div class="form-group mb-3">
+            <%= form.label :name %>
+            <%= form.text_field :name, class: 'form-control' %>
+          </div>
 
-  <div class="form-group mt-3">
-    <%= form.label :price %>
-    <%= form.text_field :price, class: 'form-control' %>
-  </div>
+          <div class="form-group mb-3">
+            <%= form.label :description %>
+            <%= form.text_field :description, class: 'form-control' %>
+          </div>
 
-  <div class="form-group mt-3">
-    <%= form.label :stock_quantity %>
-    <%= form.text_field :stock_quantity, class: 'form-control' %>
-  </div>
+          <div class="form-group mb-3">
+            <%= form.label :price %>
+            <%= form.text_field :price, class: 'form-control' %>
+          </div>
 
-  <div class="form-group mt-3">
-    <%= form.label :expiry_date %>
-    <%= form.text_field :expiry_date, class: 'form-control' %>
-  </div>
+          <div class="form-group mb-3">
+            <%= form.label :stock_quantity %>
+            <%= form.text_field :stock_quantity, class: 'form-control' %>
+          </div>
 
-  <div class="form-group mt-4">
-    <%= form.submit class: 'btn btn-primary' %>
+          <div class="form-group mb-3">
+            <%= form.label :expiry_date %>
+            <%= form.text_field :expiry_date, class: 'form-control' %>
+          </div>
+
+          <div class="d-flex justify-content-center mt-4"> <!-- Center the submit button -->
+            <%= form.submit 'Save', class: 'btn btn-dark px-5 py-2' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
-<% end %>
+</div>
+
+<%= render 'branches/footer' %>

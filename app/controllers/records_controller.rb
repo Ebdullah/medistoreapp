@@ -61,6 +61,54 @@ class RecordsController < ApplicationController
         redirect_to branch_records_path(@branch), notice: "Bill was succesfully deleted."
     end
 
+    def pdf
+        @record = @branch.records.find(params[:id])
+      
+        pdf = Prawn::Document.new
+        pdf.text "Invoice ##{@record.id}", size: 40, style: :bold, align: :center
+        pdf.move_down 20
+      
+        pdf.text "Customer Name: #{@record.customer_name}"
+        pdf.text "Customer Phone: #{@record.customer_phone}"
+        pdf.text "Total Amount: #{@record.total_amount}"
+        pdf.text "Payment Method: #{@record.payment_method}"
+        pdf.move_down 20
+      
+        header = ["Medicine Name", "Quantity", "Price"]
+        data = @record.record_items.map do |item|
+          [item.medicine.name, item.quantity, item.price]
+        end
+      
+        table_data = [header] + data
+      
+        # Define a smaller width for the table (e.g., 80% of the PDF width)
+        table_width = pdf.bounds.width * 0.8
+      
+        # Center the table using bounding_box with specified width
+        pdf.bounding_box([pdf.bounds.left + (pdf.bounds.width - table_width) / 2, pdf.cursor], width: table_width) do
+          pdf.table(table_data, header: true, width: table_width) do
+            row(0).font_style = :bold
+            row(0).background_color = '000000'
+            row(0).text_color = 'cccccc'
+            cells.style do |cell|
+              cell.border_width = 1
+              cell.border_color = '000000'
+            end
+          end
+        end
+      
+        pdf.move_down 20
+        pdf.text "Total Amount: #{@record.total_amount}", size: 24, style: :bold, align: :right
+      
+        pdf.move_down 40
+        pdf.text "Thank you for your business!", size: 16, style: :italic, align: :center
+        pdf.text "Contact us: medistore@example.com | Phone: (123) 456-7890", size: 12, align: :center
+      
+        send_data pdf.render, filename: "invoice_#{@record.id}.pdf", type: 'application/pdf', disposition: 'attachment'
+      end
+      
+      
+
     private
 
     def set_branch

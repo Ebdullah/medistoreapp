@@ -3,7 +3,11 @@ Rails.application.routes.draw do
   devise_for :users
 
   resources :branches do 
-    resources :records
+    resources :records do 
+      member do
+        get 'pdf'
+      end
+    end
     resources :audit_logs
     resources :medicines
     resources :stock_transfers do

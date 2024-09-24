@@ -1,33 +1,44 @@
-<h1>Stock Transfers</h1>
-<%= link_to 'New Stock Transfer', new_branch_stock_transfer_path(@branch), class: 'btn btn-primary' %>
+<%= render 'stock_transfers/nav' %>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Requesting Branch</th>
-      <th>Receiving Branch</th>
-      <th>Status</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @stock_transfers.each do |transfer| %>
+<div class="container mt-5">
+  <h3 class="text-center mb-4">Stock Transfers Management</h3>
+
+  <table class="table table-hover table-bordered">
+    <thead class="table-dark">
       <tr>
-        <td><%= transfer.id %></td>
-        <td><%= transfer.requesting_branch.name %></td>
-        <td><%= transfer.receiving_branch.name %></td>
-        <td><%= transfer.status %></td>
-        <td>
-          <%= link_to 'Show', branch_stock_transfer_path(@branch, transfer), class: 'btn btn-info' %>
-          <%= link_to 'Edit', edit_branch_stock_transfer_path(@branch, transfer), class: 'btn btn-warning' %>
-          <% if transfer.pending? %>
-            <%= link_to 'Approve', approve_branch_stock_transfer_path(transfer.requesting_branch, transfer), method: :put, class: 'btn btn-success' %>
-            <%= link_to 'Deny', deny_branch_stock_transfer_path(transfer.requesting_branch, transfer), method: :put, class: 'btn btn-danger' %>
-          <% end %>
-          <%= link_to 'Delete', branch_stock_transfer_path(@branch, transfer), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
-        </td>
+        <th>ID</th>
+        <th>Requesting Branch</th>
+        <th>Receiving Branch</th>
+        <th>Status</th>
+        <th>Actions</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @stock_transfers.each do |transfer| %>
+        <tr>
+          <td><%= transfer.id %></td>
+          <td><%= transfer.requesting_branch.name %></td>
+          <td><%= transfer.receiving_branch.name %></td>
+          <td><%= transfer.status %></td>
+          <td>
+            <div class="d-flex gap-2 justify-content-start">
+              <%= link_to 'View Stock Request Details', branch_stock_transfer_path(@branch, transfer), class: 'btn btn-outline-dark btn-sm' %>
+              <%= link_to 'Edit Request', edit_branch_stock_transfer_path(@branch, transfer), class: 'btn btn-outline-dark btn-sm' %>
+              <% if transfer.pending? %>
+                <%= link_to 'Approve', approve_branch_stock_transfer_path(transfer.requesting_branch, transfer), method: :put, class: 'btn btn-outline-dark btn-sm' %>
+                <%= link_to 'Deny', deny_branch_stock_transfer_path(transfer.requesting_branch, transfer), method: :put, class: 'btn btn-outline-dark btn-sm' %>
+              <% end %>
+              <%= link_to 'Delete Transfer', branch_stock_transfer_path(@branch, transfer), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-dark btn-sm' %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= link_to 'Create New Stock Transfer', new_branch_stock_transfer_path(@branch), class: 'btn btn-dark mb-3 w-100' %>
+</div>
+
+<%= link_to 'Back to Branch', branch_path(@branch), class: 'btn btn-dark mb-2 mt-4 ms-3' %>
+
+<%= render 'stock_transfers/footer' %>

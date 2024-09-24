@@ -1,53 +1,80 @@
-<%= form_with(model: [@branch, @stock_transfer]) do |form| %>
-  <% if @stock_transfer.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@stock_transfer.errors.count, "error") %> prohibited this stock transfer from being saved:</h2>
-      <ul>
-        <% @stock_transfer.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
+<div class="container mt-4">
+  <div class="row justify-content-center"> <!-- Center the card horizontally -->
+    <div class="col-md-6 mb-5"> <!-- Add margin-bottom to the column -->
+      <div class="card shadow p-4"> 
+        <h2 class="text-center mb-4">Stock Transfer Form</h2> 
+
+        <%= form_with(model: [@branch, @stock_transfer]) do |form| %>
+          <% if @stock_transfer.errors.any? %>
+            <div id="error_explanation">
+              <h5><%= pluralize(@stock_transfer.errors.count, "error") %> prohibited this stock transfer from being saved:</h5>
+              <ul>
+                <% @stock_transfer.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <!-- Receiving Branch -->
+          <div class="form-group mb-3">
+            <%= form.label :receiving_branch_id %>
+            <%= form.collection_select :receiving_branch_id, Branch.where.not(id: @branch.id), :id, :name, { prompt: 'Select Receiving Branch' }, class: 'form-control' %>
+          </div>
+
+          <!-- Medicines and Quantities -->
+          <div class="form-group mb-3">
+            <%= form.label :medicines %>
+            <div id="medicines-container">
+              <div class="medicine-item mb-3">
+                <div class="row">
+                  <div class="col-md-6">
+                    <%= form.label :medicine_id, "Medicine" %>
+                    <%= select_tag 'stock_transfer[medicines_attributes][][medicine_id]', options_from_collection_for_select(@branch.medicines.all, :id, :name), prompt: 'Select Medicine', class: 'form-control' %>
+                  </div>
+                  <div class="col-md-6">
+                    <%= form.label :quantity, "Quantity" %>
+                    <%= number_field_tag 'stock_transfer[medicines_attributes][][quantity]', nil, class: 'form-control', min: 1 %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" id="add-medicine" class="btn btn-secondary mt-3">Add Another Medicine</button>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="d-flex justify-content-center mt-4">
+            <%= form.submit 'Save Stock Transfer', class: 'btn btn-dark px-5 py-2' %>
+          </div>
         <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="form-group">
-    <%= form.label :receiving_branch_id %>
-    <%= form.collection_select :receiving_branch_id, Branch.where.not(id: @branch.id), :id, :name, { prompt: 'Select Receiving Branch' }, class: 'form-control' %>
-  </div>
-
-  <div class="form-group">
-    <%= form.label :medicines %>
-    <div id="medicines-container">
-      <div class="medicine-item">
-        <%= form.label :medicine_id, "Medicine" %>
-        <%= select_tag 'stock_transfer[medicines_attributes][][medicine_id]', options_from_collection_for_select(@branch.medicines.all, :id, :name), prompt: 'Select Medicine', class: 'form-control' %>
-        <%= form.label :quantity, "Quantity" %>
-        <%= number_field_tag 'stock_transfer[medicines_attributes][][quantity]', nil, class: 'form-control', min: 1 %>
       </div>
     </div>
-    <button type="button" id="add-medicine" class="btn btn-secondary">Add Another Medicine</button>
   </div>
+</div>
 
-  <div class="actions">
-    <%= form.submit class: 'btn btn-primary' %>
-  </div>
-<% end %>
+<%= render 'branches/footer' %>
 
 <script>
   document.getElementById('add-medicine').addEventListener('click', function() {
     const container = document.getElementById('medicines-container');
     const newMedicineItem = document.createElement('div');
-    newMedicineItem.classList.add('medicine-item');
+    newMedicineItem.classList.add('medicine-item', 'mb-3');
     newMedicineItem.innerHTML = `
-      <label>Medicine</label>
-      <select name="stock_transfer[medicines_attributes][][medicine_id]" class="form-control">
-        <option value="">Select Medicine</option>
-        <% Medicine.all.each do |medicine| %>
-          <option value="<%= medicine.id %>"><%= medicine.name %></option>
-        <% end %>
-      </select>
-      <label>Quantity</label>
-      <input type="number" name="stock_transfer[medicines_attributes][][quantity]" class="form-control" min="1">
+      <div class="row">
+        <div class="col-md-6">
+          <label>Medicine</label>
+          <select name="stock_transfer[medicines_attributes][][medicine_id]" class="form-control">
+            <option value="">Select Medicine</option>
+            <% Medicine.all.each do |medicine| %>
+              <option value="<%= medicine.id %>"><%= medicine.name %></option>
+            <% end %>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label>Quantity</label>
+          <input type="number" name="stock_transfer[medicines_attributes][][quantity]" class="form-control" min="1">
+        </div>
+      </div>
     `;
     container.appendChild(newMedicineItem);
   });
