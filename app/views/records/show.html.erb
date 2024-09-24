@@ -1,9 +1,11 @@
+<%= render 'records/nav' %>
+
 <div class="container mt-5">
   <div class="row">
     <div class="col-md-8 offset-md-2">
       <!-- Invoice Header -->
-      <div class="card mb-4">
-        <div class="card-header bg-dark text-white">
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-dark text-white text-center">
           <h1 class="card-title mb-0">Billing Details</h1>
         </div>
         <div class="card-body">
@@ -12,12 +14,12 @@
           <!-- Total Amount and Payment Method -->
           <div class="row mb-4">
             <div class="col-md-6">
-              <p><strong>Total Amount:</strong></p>
-              <h4 class="text-success"><%= number_to_currency(@record.total_amount) %></h4>
+              <p class="mb-1"><strong>Total Amount:</strong></p>
+              <h4 class="text-success mb-0"><%= number_to_currency(@record.total_amount) %></h4>
             </div>
             <div class="col-md-6">
-              <p><strong>Payment Method:</strong></p>
-              <h4><%= @record.payment_method %></h4>
+              <p class="mb-1"><strong>Payment Method:</strong></p>
+              <h4 class="mb-0"><%= @record.payment_method.titleize %></h4>
             </div>
           </div>
 
@@ -29,6 +31,7 @@
                 <th>Medicine</th>
                 <th>Quantity</th>
                 <th>Price</th>
+                <th>Total</th>
               </tr>
             </thead>
             <tbody>
@@ -37,20 +40,24 @@
                   <td><%= item.medicine.name %></td>
                   <td><%= item.quantity %></td>
                   <td><%= number_to_currency(item.price) %></td>
-                  <td>Total: <%= item.quantity * item.price %></td>
+                  <td><%= number_to_currency(item.quantity * item.price) %></td>
                 </tr>
               <% end %>
             </tbody>
           </table>
 
           <!-- Buttons -->
-          <div class="mt-4">
-            <%= link_to 'Back', branch_records_path(@branch), class: 'btn btn-secondary' %>
-            <%= link_to 'Edit', edit_branch_record_path(@branch, @record), class: 'btn btn-warning' %>
-            <%= link_to 'Destroy', branch_record_path(@branch, @record), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+          <div class="mt-4 d-flex justify-content-between">
+            <%= link_to 'Back', branch_records_path(@branch), class: 'btn btn-dark' %>
+            <div>
+              <%= link_to 'Edit', edit_branch_record_path(@branch, @record), class: 'btn btn-outline-dark me-2' %>
+              <%= link_to 'Destroy', branch_record_path(@branch, @record), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-dark' %>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<%= render 'records/footer' %>

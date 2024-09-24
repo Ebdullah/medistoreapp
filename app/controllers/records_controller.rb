@@ -17,41 +17,32 @@ class RecordsController < ApplicationController
 
     def create
         ActiveRecord::Base.transaction do
-          # Create or find the customer
-          customer = User.find_or_create_by!(name: record_params[:customer_name], phone: record_params[:customer_phones]) do |user|
+          customer = User.find_or_create_by!(name: record_params[:customer_name], phone: record_params[:customer_phone]) do |user|
             user.email = generate_random_email
             user.password = Devise.friendly_token[0, 20]
             user.role = :customer
             user.phone = record_params[:customer_phone]
           end
-          # Build the record with the new customer_id
+      
           @record = @branch.records.build(record_params.except(:customer_name, :customer_phone))
           @record.customer_id = customer.id
-
-          # Handle records
-          if params[:record][:record_items_attributes].present?
-            params[:record][:record_items_attributes].each do |_, item|
-                # Build record item with provided medicine info
-                @record.record_items.build(
-                    medicine_id: item[:medicine_id],
-                    quantity: item[:quantity],
-                    price: item[:price]
-                )
-            end
-          end
-    
+          @record.customer_name = record_params[:customer_name]
+          @record.customer_phone = record_params[:customer_phone]
+      
           @record.total_amount = calculate_total_amount(@record.record_items)
-
+      
           if @record.save
+            create_audit_logs
             redirect_to branch_record_path(@branch, @record), notice: 'Bill was successfully created.'
           else
-            render :new
+            render :new, status: :unprocessable_entity
           end
         end
-    rescue ActiveRecord::RecordInvalid => e
+      rescue ActiveRecord::RecordInvalid => e
         flash.now[:alert] = "Error: #{e.message}"
         render :new
-    end
+      end
+      
 
     def edit
         @record
@@ -90,5 +81,19 @@ class RecordsController < ApplicationController
 
     def calculate_total_amount(record_items)
         record_items.sum { |item| item.quantity.to_f * item.price.to_f }
+    end
+
+    def create_audit_logs
+        @record.record_items.each do |item|
+            AuditLog.create!(
+            branch: @branch,
+            cashier: @record.cashier,
+            record: @record,
+            medicine: item.medicine,
+            quantity_sold: item.quantity,
+            total_amount: item.price * item.quantity,
+            audited_from: @record.created_at
+            )
+        end
     end
 end

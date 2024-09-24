@@ -1,0 +1,54 @@
+<%= form_with(model: [@branch, @stock_transfer]) do |form| %>
+  <% if @stock_transfer.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@stock_transfer.errors.count, "error") %> prohibited this stock transfer from being saved:</h2>
+      <ul>
+        <% @stock_transfer.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :receiving_branch_id %>
+    <%= form.collection_select :receiving_branch_id, Branch.where.not(id: @branch.id), :id, :name, { prompt: 'Select Receiving Branch' }, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :medicines %>
+    <div id="medicines-container">
+      <div class="medicine-item">
+        <%= form.label :medicine_id, "Medicine" %>
+        <%= select_tag 'stock_transfer[medicines_attributes][][medicine_id]', options_from_collection_for_select(@branch.medicines.all, :id, :name), prompt: 'Select Medicine', class: 'form-control' %>
+        <%= form.label :quantity, "Quantity" %>
+        <%= number_field_tag 'stock_transfer[medicines_attributes][][quantity]', nil, class: 'form-control', min: 1 %>
+      </div>
+    </div>
+    <button type="button" id="add-medicine" class="btn btn-secondary">Add Another Medicine</button>
+  </div>
+
+  <div class="actions">
+    <%= form.submit class: 'btn btn-primary' %>
+  </div>
+<% end %>
+
+<script>
+  document.getElementById('add-medicine').addEventListener('click', function() {
+    const container = document.getElementById('medicines-container');
+    const newMedicineItem = document.createElement('div');
+    newMedicineItem.classList.add('medicine-item');
+    newMedicineItem.innerHTML = `
+      <label>Medicine</label>
+      <select name="stock_transfer[medicines_attributes][][medicine_id]" class="form-control">
+        <option value="">Select Medicine</option>
+        <% Medicine.all.each do |medicine| %>
+          <option value="<%= medicine.id %>"><%= medicine.name %></option>
+        <% end %>
+      </select>
+      <label>Quantity</label>
+      <input type="number" name="stock_transfer[medicines_attributes][][quantity]" class="form-control" min="1">
+    `;
+    container.appendChild(newMedicineItem);
+  });
+</script>

@@ -2,6 +2,7 @@ class AuditLog < ApplicationRecord
   belongs_to :cashier, class_name: 'User'
   belongs_to :record
   belongs_to :medicine
+  belongs_to :branch
 
   before_save :set_audited_to
 

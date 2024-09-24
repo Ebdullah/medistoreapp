@@ -1,0 +1,20 @@
+<div class="medicine-fields row mb-3">
+  <div class="col-md-4">
+    <%= f.label :medicine_id, class: 'form-label' %>
+    <%= f.select :medicine_id, @branch.medicines.all.pluck(:name, :id), { prompt: "Select Medicine" }, class: 'form-select select2-medicine' %>
+  </div>
+
+  <div class="col-md-4">
+    <%= f.label :quantity, class: 'form-label' %>
+    <%= f.number_field :quantity, class: 'form-control' %>
+  </div>
+
+  <div class="col-md-4">
+    <%= f.label :price, class: 'form-label' %>
+    <%= f.number_field :price, class: 'form-control' %>
+  </div>
+
+  <div class="col-md-12 mt-2">
+    <button type="button" class="btn btn-outline-dark remove-medicine">Remove</button>
+  </div>
+</div>

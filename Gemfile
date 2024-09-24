@@ -47,6 +47,8 @@ gem 'bootstrap', '~>5.3.3'
 gem 'pry'
 
 gem 'sassc-rails', '~> 2.1'
+gem 'prawn'
+
 # gem 'dartsass-rails'
 
 # gem 'bootstrap-sass'

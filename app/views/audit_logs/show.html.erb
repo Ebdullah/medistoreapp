@@ -1,0 +1,45 @@
+<%= render 'branches/nav' %>
+
+<div class="container mt-5 py-2 d-flex justify-content-center">
+  <div class="card shadow-sm p-3" style="width: 400px;"> 
+    <h5 class="card-header text-center text-light bg-dark mb-3"> 
+      Audit Log Details
+    </h5>
+
+    <div class="card-body">
+      <p>
+        <strong>Cashier:</strong>
+        <%= @audit_log.cashier.name %>
+      </p>
+      <p>
+        <strong>Medicine:</strong>
+        <%= @audit_log.medicine.name %>
+      </p>
+      <p>
+        <strong>Quantity Sold:</strong>
+        <%= @audit_log.quantity_sold %>
+      </p>
+      <p>
+        <strong>Total Amount:</strong>
+        <%= number_to_currency(@audit_log.total_amount) %>
+      </p>
+      <p>
+        <strong>Audited From:</strong>
+        <%= @audit_log.audited_from.strftime("%d %B %Y") %>
+      </p>
+      <p>
+        <strong>Audited To:</strong>
+        <%= @audit_log.audited_to.strftime("%d %B %Y") %>
+      </p>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 mt-3">
+      <%= link_to 'Back to Audit Logs', branch_audit_logs_path(@branch), class: "btn btn-outline-dark px-3 py-1" %>
+      <%= link_to 'Delete Audit Log', branch_audit_log_path(@branch, @audit_log), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-dark px-3 py-1" %>
+    </div>
+  </div>
+</div>
+
+<%= link_to 'Branches', branches_path, class: 'btn btn-dark px-5 py-2 ms-3 mt-3' %>
+
+<%= render 'branches/footer' %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_19_130837) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_23_131308) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -24,6 +24,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_19_130837) do
     t.datetime "audited_to"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "branch_id"
+    t.index ["branch_id"], name: "index_audit_logs_on_branch_id"
     t.index ["cashier_id"], name: "index_audit_logs_on_cashier_id"
     t.index ["medicine_id"], name: "index_audit_logs_on_medicine_id"
     t.index ["record_id"], name: "index_audit_logs_on_record_id"
@@ -108,6 +110,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_19_130837) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "audit_logs", "branches"
   add_foreign_key "audit_logs", "medicines"
   add_foreign_key "audit_logs", "records"
   add_foreign_key "audit_logs", "users", column: "cashier_id"

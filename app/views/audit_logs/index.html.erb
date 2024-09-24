@@ -1,0 +1,44 @@
+<%= render 'audit_logs/nav' %>
+
+
+<div class="container mt-5">
+  <h3 class="text-center mb-4">Audit Logs</h3>
+  
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>Cashier</th>
+          <th>Medicine</th>
+          <th>Quantity Sold</th>
+          <th>Total Amount</th>
+          <th>Audited From</th>
+          <th>Audited To</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @audit_logs.each do |log| %>
+          <tr>
+            <td><%= log.cashier.name %></td>
+            <td><%= log.medicine.name %></td>
+            <td><%= log.quantity_sold %></td>
+            <td><%= number_to_currency(log.total_amount) %></td>
+            <td><%= log.audited_from.strftime('%Y-%m-%d') %></td>
+            <td><%= log.audited_to.strftime('%Y-%m-%d') %></td>
+            <td>
+              <div class="d-flex gap-2 justify-content-start">
+                <%= link_to 'Show', branch_audit_log_path(@branch, log), class: 'btn btn-outline-dark btn-sm' %>
+                <%= link_to 'Delete', branch_audit_log_path(@branch, log), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-dark btn-sm' %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  
+  <%= link_to 'Back', branch_path(@branch), class: 'btn btn-dark btn-sm px-4 pt-2 pb-2 ' %>
+</div>
+
+<%= render 'audit_logs/footer' %>

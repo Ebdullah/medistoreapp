@@ -34,31 +34,12 @@
 
     <div id="medicines-fields">
       <%= form.fields_for :record_items do |item| %>
-        <div class="medicine-fields row mb-3">
-          <div class="col-md-4">
-            <%= item.label :medicine_id, class: 'form-label' %>
-            <%= item.select :medicine_id, Medicine.all.pluck(:name,:id), {prompt: "Select Medicine"}, class: 'form-select select2-medicine' %>
-          </div>
-
-          <div class="col-md-4">
-            <%= item.label :quantity, class: 'form-label' %>
-            <%= item.number_field :quantity, class: 'form-control' %>
-          </div>
-
-          <div class="col-md-4">
-            <%= item.label :price, class: 'form-label' %>
-            <%= item.number_field :price, class: 'form-control' %>
-          </div>
-
-          <div class="col-md-12 mt-2">
-            <button type="button" class="btn btn-danger remove-medicine">Remove</button>
-          </div>
-        </div>
+        <%= render 'medicine_fields', f: item %>
       <% end %>
     </div>
 
     <div class="form-group">
-      <button type="button" class="btn btn-primary" id="add-medicine">Add Medicine</button>
+      <button type="button" class="btn btn-outline-dark" id="add-medicine">Add Medicine</button>
     </div>
 
     <div class="form-group mt-4">
@@ -66,20 +47,30 @@
     </div>
   </div>
 
-
-
+  <!-- JavaScript to handle adding/removing dynamic fields -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const addMedicineButton = document.getElementById('add-medicine');
       const medicinesContainer = document.getElementById('medicines-fields');
+      let medicineIndex = document.querySelectorAll('.medicine-fields').length;
 
       addMedicineButton.addEventListener('click', function(e) {
         e.preventDefault();
-        const fields = document.querySelector('.medicine-fields');
-        const newFields = fields.cloneNode(true);
-        newFields.querySelectorAll('input').forEach(input => input.value = '');
-        newFields.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
-        medicinesContainer.appendChild(newFields);
+        
+        // Get the template and replace the index in the name and id
+        let template = document.getElementById('medicine-template').innerHTML;
+        template = template.replace(/RECORD_ITEM_INDEX/g, medicineIndex);
+
+        medicinesContainer.insertAdjacentHTML('beforeend', template);
+
+        // Reset the cloned fields' values
+        let newFields = medicinesContainer.querySelectorAll('.medicine-fields:last-child');
+        newFields.forEach(field => {
+          field.querySelectorAll('input').forEach(input => input.value = '');
+          field.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+        });
+
+        medicineIndex++;
       });
 
       medicinesContainer.addEventListener('click', function(e) {
@@ -90,3 +81,29 @@
     });
   </script>
 <% end %>
+
+
+<template id="medicine-template">
+  <div class="medicine-fields row mb-3">
+    <div class="col-md-4">
+      <label for="record_record_items_attributes_RECORD_ITEM_INDEX_medicine_id" class="form-label">Select Medicine</label>
+      <select name="record[record_items_attributes][RECORD_ITEM_INDEX][medicine_id]" id="record_record_items_attributes_RECORD_ITEM_INDEX_medicine_id" class="form-select select2-medicine">
+        <%= options_for_select(@branch.medicines.all.pluck(:name, :id)) %>
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label for="record_record_items_attributes_RECORD_ITEM_INDEX_quantity" class="form-label">Quantity</label>
+      <input type="number" name="record[record_items_attributes][RECORD_ITEM_INDEX][quantity]" id="record_record_items_attributes_RECORD_ITEM_INDEX_quantity" class="form-control">
+    </div>
+
+    <div class="col-md-4">
+      <label for="record_record_items_attributes_RECORD_ITEM_INDEX_price" class="form-label">Price</label>
+      <input type="number" name="record[record_items_attributes][RECORD_ITEM_INDEX][price]" id="record_record_items_attributes_RECORD_ITEM_INDEX_price" class="form-control">
+    </div>
+
+    <div class="col-md-12 mt-2">
+      <button type="button" class="btn btn-outline-dark remove-medicine">Remove</button>
+    </div>
+  </div>
+</template>
