@@ -1,14 +1,17 @@
 class StockTransfersController < ApplicationController
   before_action :set_branch
   before_action :set_stock_transfer, only: [:show, :edit, :update, :destroy]
+  after_action :verify_authorized, except: [:index]
 
   def index
     @stock_transfers = @branch.stock_transfers
+    authorize StockTransfer
   end
 
   def new
     @branch = Branch.find(params[:branch_id])
     @stock_transfer = StockTransfer.new
+    authorize @stock_transfer
   end
 
   def create
@@ -16,6 +19,7 @@ class StockTransfersController < ApplicationController
   
     @branch = Branch.find(params[:branch_id])
     @stock_transfer = @branch.stock_transfers.new(stock_transfer_params)
+    authorize @stock_transfer
   
     medicines_hash = {}
   
@@ -43,14 +47,15 @@ class StockTransfersController < ApplicationController
   
 
   def show
-    @stock_transfer
+    authorize @stock_transfer
   end
 
   def edit
-    @stock_transfer
+    authorize @stock_transfer
   end
 
   def update
+    authorize @stock_transfer
     if @stock_transfer.update(stock_transfer_params)
       redirect_to branch_stock_transfer_path(@branch, @stock_transfer), notice: 'Stock transfer updated successfully.'
     else
@@ -59,11 +64,13 @@ class StockTransfersController < ApplicationController
   end
 
   def destroy
+    authorize @stock_transfer
     @stock_transfer.destroy
     redirect_to branch_stock_transfers_path(@branch), notice: 'Stock transfer deleted successfully.'
   end
 
   def approve
+    authorize @stock_transfer
     @branch = Branch.find(params[:branch_id])
     @stock_transfer = @branch.stock_transfers.find_by(id: params[:id])
 
@@ -106,6 +113,7 @@ class StockTransfersController < ApplicationController
   
   
   def deny
+    authorize @stock_transfer
     @branch = Branch.find(params[:branch_id])
     @stock_transfer = @branch.stock_transfers.find_by(id: params[:id])
 

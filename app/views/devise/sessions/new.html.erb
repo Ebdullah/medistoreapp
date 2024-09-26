@@ -15,11 +15,6 @@
         <%= f.password_field :password, autocomplete: "current-password", class: "form-control" %>
       </div>
 
-      <div class="mb-3">
-        <%= f.label :role, "Select Role", class: "form-label" %>
-        <%= f.select :role, options_for_select([['Super Admin', 0], ['Branch Admin', 1], ['Customer', 2], ['Cashier', 3]], selected: params[:role]), { include_blank: 'Choose role' }, class: "form-select" %>
-      </div>
-
       <% if devise_mapping.rememberable? %>
         <div class="form-check mb-3">
           <%= f.check_box :remember_me, class: "form-check-input" %>

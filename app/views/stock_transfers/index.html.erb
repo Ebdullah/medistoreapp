@@ -22,23 +22,42 @@
           <td><%= transfer.status %></td>
           <td>
             <div class="d-flex gap-2 justify-content-start">
-              <%= link_to 'View Stock Request Details', branch_stock_transfer_path(@branch, transfer), class: 'btn btn-outline-dark btn-sm' %>
-              <%= link_to 'Edit Request', edit_branch_stock_transfer_path(@branch, transfer), class: 'btn btn-outline-dark btn-sm' %>
+
+              <% if policy(transfer).edit? %>
+                <%= link_to 'View Stock Request Details', branch_stock_transfer_path(@branch, transfer), class: 'btn btn-outline-dark btn-sm' %>
+              <% end %>
+
+              <% if policy(transfer).edit? %>
+                <%= link_to 'Edit Request', edit_branch_stock_transfer_path(@branch, transfer), class: 'btn btn-outline-dark btn-sm' %>
+              <% end %>
+
+              <% if policy(transfer).deny? %>
+                <%= link_to 'Delete Transfer', branch_stock_transfer_path(@branch, transfer), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-dark btn-sm' %>
+              <% end %>
+
               <% if transfer.pending? %>
+
+              <% if policy(transfer).approve? %>
                 <%= link_to 'Approve', approve_branch_stock_transfer_path(transfer.requesting_branch, transfer), method: :put, class: 'btn btn-outline-dark btn-sm' %>
+              <% end %>
+
+              <% if policy(transfer).deny? %>
                 <%= link_to 'Deny', deny_branch_stock_transfer_path(transfer.requesting_branch, transfer), method: :put, class: 'btn btn-outline-dark btn-sm' %>
               <% end %>
-              <%= link_to 'Delete Transfer', branch_stock_transfer_path(@branch, transfer), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-dark btn-sm' %>
+
+              <% end %>
+
+
             </div>
           </td>
         </tr>
       <% end %>
     </tbody>
   </table>
-
+<% if policy(StockTransfer).create? %>
   <%= link_to 'Create New Stock Transfer', new_branch_stock_transfer_path(@branch), class: 'btn btn-dark mb-3 w-100' %>
+<% end %>
 </div>
-
 <%= link_to 'Back to Branch', branch_path(@branch), class: 'btn btn-dark mb-2 mt-4 ms-3' %>
 
 <%= render 'stock_transfers/footer' %>

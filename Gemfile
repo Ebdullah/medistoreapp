@@ -48,6 +48,10 @@ gem 'pry'
 
 gem 'sassc-rails', '~> 2.1'
 gem 'prawn-table'
+gem 'pundit'
+gem 'letter_opener'
+gem 'sidekiq'
+
 
 
 # gem 'dartsass-rails'

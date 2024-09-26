@@ -21,6 +21,11 @@
     <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
   </div>
 
+  <div class="mb-3">
+    <%= f.label :role, "Select Role", class: "form-label" %>
+    <%= f.select :role, options_for_select([['Super Admin', 0], ['Branch Admin', 1], ['Customer', 2], ['Cashier', 3]], selected: params[:role]), { include_blank: 'Choose role' }, class: "form-select" %>
+  </div>
+
   <div class="actions">
     <%= f.submit "Sign up" %>
   </div>

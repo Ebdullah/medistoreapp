@@ -1,22 +1,26 @@
 class MedicinesController < ApplicationController
     before_action :set_branch
     before_action :set_medicine, only: [:show, :edit, :update, :destroy]
+    after_action :verify_authorized
 
 
     def index
         @medicines = @branch.medicines
+        authorize @medicines
     end
 
     def show
-        @medicine
+        authorize @medicine
     end
 
     def new
         @medicine = @branch.medicines.build
+        authorize @medicine
     end
 
     def create
         @medicine = @branch.medicines.build(medicine_params)
+        authorize @medicine
 
         if @medicine.save
             redirect_to branch_medicine_path(@branch, @medicine), notice: "Medicine was created succesfully."
@@ -26,10 +30,11 @@ class MedicinesController < ApplicationController
     end
 
     def edit
-        @medicine
+        authorize @medicine
     end
 
     def update
+        authorize @medicine
         if @medicine.update(medicine_params)
             redirect_to branch_medicine_path(@branch, @medicine), notice: "Medicine Succesfully Updated."
         else
@@ -38,6 +43,7 @@ class MedicinesController < ApplicationController
     end
 
     def destroy
+        authorize @medicine
         @medicine.destroy
         redirect_to branch_medicines_path(@branch), notice: "Medicine was succesfully deleted."
     end

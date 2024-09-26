@@ -1,4 +1,7 @@
 <%= render 'medicines/nav' %>
 
 <%= render 'form', medicine: @medicine %>
-<%= link_to 'Back', branch_medicines_path(@branch), class: 'btn btn-secondary' %>
+<%= link_to 'Back', branch_medicines_path(@branch), class: 'btn btn-sm btn-dark ms-3 px-3' %>
+ 
+<%= render 'branches/footer' %>
+

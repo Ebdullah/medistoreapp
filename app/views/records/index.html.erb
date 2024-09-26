@@ -6,6 +6,7 @@
   <table class="table table-hover table-bordered">
     <thead class="table-dark">
       <tr>
+        <th>Cashier</th>
         <th>Customer</th>
         <th>Total Amount</th>
         <th>Payment Method</th>
@@ -15,6 +16,7 @@
     <tbody>
       <% @records.each do |record| %>
         <tr>
+          <td><%= record.cashier.name %></td>
           <td><%= record.customer_name %></td>
           <td><%= number_to_currency(record.total_amount) %></td>
           <td><%= record.payment_method %></td>
@@ -22,17 +24,23 @@
             <div class="d-flex gap-3 justify-content-start">
               <%= link_to 'View Bill', branch_record_path(@branch, record), class: 'btn btn-outline-dark btn-sm px-1' %>
               <%= link_to 'Edit Bill', edit_branch_record_path(@branch, record), class: 'btn btn-outline-dark btn-sm px-1' %>
-              <%= link_to 'Delete Bill', branch_record_path(@branch, record), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-dark btn-sm px-1' %>
+              <% if policy(record).destroy? %>
+                <%= link_to 'Delete Bill', branch_record_path(@branch, record), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-dark btn-sm px-1' %>
+              <% end %>
             </div>
           </td>
         </tr>
       <% end %>
     </tbody>
   </table>
-
+<% if policy(Record).create? %>
   <%= link_to 'Create Bill', new_branch_record_path(@branch), class: 'btn btn-dark w-100' %>
+<% end %>
 </div>
+
+<% if current_user.super_admin? || current_user.branch_admin? %>
   <%= link_to 'Back', branch_path(@branch), class: 'btn btn-dark px-5 py-2 ms-3 mt-5' %>
+<% end %>
 
 
 <%= render 'records/footer' %>
