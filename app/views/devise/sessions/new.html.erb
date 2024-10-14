@@ -1,8 +1,8 @@
 <!-- app/views/devise/sessions/new.html.erb -->
-<div class="container-fluid d-flex align-items-center justify-content-center min-vh-100" style="background-size: cover; background-position: center; position: relative;">
-  <%# <div class="overlay"></div> %>
+<div class="container-fluid d-flex align-items-center justify-content-center min-vh-100" 
+     style="background-image: url('<%= asset_path('abstract_background.jpg') %>'); background-size: cover; background-position: center; position: relative;">
   <div class="card p-4 shadow-lg" style="max-width: 400px; background-color: rgba(255, 255, 255, 0.9); z-index: 2;">
-    <h2 class="text-center">Log in</h2>
+    <h2 class="text-center">Log In</h2>
 
     <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
       <div class="mb-3">
@@ -23,10 +23,20 @@
       <% end %>
 
       <div class="d-grid">
-        <%= f.submit "Log in", class: "btn btn-primary" %>
+        <%= f.submit "Log In", class: "btn btn-dark" %>
       </div>
     <% end %>
 
-    <%= render "devise/shared/links" %>
+    <!-- Forgot Password Link -->
+    <div class="mt-3 text-left">
+      <%= link_to "Forgot Password?", new_password_path(resource_name), class: "text-decoration-none text-muted small" %>
+    </div>
+
+    <div class="my-4"></div>
+
+    <!-- Sign Up Prompt -->
+    <div class="text-center">
+      <small>Don't have an account? <%= link_to "Sign Up", new_registration_path(resource_name), class: "text-primary" %></small>
+    </div>
   </div>
 </div>

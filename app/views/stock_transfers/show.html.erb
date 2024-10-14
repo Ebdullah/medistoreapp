@@ -1,61 +1,66 @@
-<%= render 'stock_transfers/nav' %>
+<div class="d-flex" style="min-height: 100vh;">
+  <div class="container mt-5 py-2">
+    <!-- Stock Transfer Details Card -->
+    <div class="card shadow-sm p-3 mb-5" style="width: 400px; margin: auto;">
+      <h5 class="card-header text-center text-light bg-dark mb-3">
+        Stock Transfer Details
+      </h5>
 
-<div class="container mt-5 py-2 d-flex justify-content-center">
-  <div class="card shadow-sm p-3" style="width: 400px;">
-    <h5 class="card-header text-center text-light bg-dark mb-3">
-      Stock Transfer Details
-    </h5>
+      <div class="card-body">
+        <p><strong>ID:</strong> <%= @stock_transfer.id %></p>
+        <p><strong>Requesting Branch:</strong> <%= @stock_transfer.requesting_branch.name %></p>
+        <p><strong>Receiving Branch:</strong> <%= @stock_transfer.receiving_branch.name %></p>
+        <p><strong>Status:</strong> <%= @stock_transfer.status %></p>
 
-    <div class="card-body">
-      <p>
-        <strong>ID:</strong>
-        <%= @stock_transfer.id %>
-      </p>
-
-      <p>
-        <strong>Requesting Branch:</strong>
-        <%= @stock_transfer.requesting_branch.name %>
-      </p>
-
-      <p>
-        <strong>Receiving Branch:</strong>
-        <%= @stock_transfer.receiving_branch.name %>
-      </p>
-
-      <p>
-        <strong>Status:</strong>
-        <%= @stock_transfer.status %>
-      </p>
-
-      <h5 class="mt-5">Medicines:</h5>
-      <% if @stock_transfer.medicines.present? %>
-        <% medicines = JSON.parse(@stock_transfer.medicines) rescue {} %>
-        <table class="table table-hover table-bordered">
-          <thead class="table-dark">
-            <tr>
-              <th>Medicine</th>
-              <th>Quantity</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% medicines.each do |medicine, quantity| %>
+        <h5 class="mt-4">Medicines:</h5>
+        <% if @stock_transfer.medicines.present? %>
+          <% medicines = JSON.parse(@stock_transfer.medicines) rescue {} %>
+          <table class="table table-hover table-bordered">
+            <thead class="table-dark">
               <tr>
-                <td><%= medicine %></td>
-                <td><%= quantity %></td>
+                <th>Medicine</th>
+                <th>Quantity</th>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
-      <% else %>
-        <p>No medicines available for this transfer.</p>
-      <% end %>
+            </thead>
+            <tbody>
+              <% medicines.each do |medicine, quantity| %>
+                <tr>
+                  <td><%= medicine %></td>
+                  <td><%= quantity %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p>No medicines available for this transfer.</p>
+        <% end %>
+      </div>
+
+      <div class="d-flex justify-content-center gap-2 mt-1">
+        <%= link_to 'Back ', branch_stock_transfers_path(@branch), class: 'btn btn-sm btn-outline-dark' %>
+        <% if policy(StockTransfer).pdf? %>
+          <%= link_to 'Download PDF', pdf_branch_stock_transfer_path(@branch, @stock_transfer), class: 'btn btn-outline-dark' %>
+        <% end %>
+      </div>
     </div>
 
-    <div class="d-flex justify-content-center gap-5 mt-3">
-      <%= link_to 'Back to Stock Transfers', branch_stock_transfers_path(@branch), class: 'btn btn-outline-dark me-3' %>
-      <%= link_to 'Edit', edit_branch_stock_transfer_path(@branch, @stock_transfer), class: 'btn btn-outline-dark ms-3' %>
-    </div>
-  </div>
+    <!-- Upload PDF Section -->
+    <% if policy(StockTransfer).pdf? %>
+      <div class="card shadow-sm p-3" style="width: 400px; margin: auto;">
+        <h5 class="card-header text-center text-light bg-secondary mb-3">
+          Upload PDF
+        </h5>
+        <%= form_with(model: [@branch, @stock_transfer], url: upload_pdf_branch_stock_transfer_path(@branch, @stock_transfer), method: :patch, local: true, html: { multipart: true }) do |form| %>
+        <div class="card-body">
+            <div class="mb-3">
+              <%= form.label :pdf, "Select PDF to Upload", class: "form-label" %>
+              <%= form.file_field :pdf, class: "form-control" %>
+            </div>
+            <div class="d-flex justify-content-center">
+              <%= form.submit "Upload PDF", class: "btn btn-primary" %>
+            </div>
+        </div>
+      </div>
+      <% end %>
+    <% end %>
 </div>
-<%= link_to 'Back to Branch', branch_path(@branch), class: 'btn btn-sm btn-dark ms-3' %>
-<%= render 'stock_transfers/footer' %>

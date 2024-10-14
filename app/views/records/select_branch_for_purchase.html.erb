@@ -1,0 +1,25 @@
+<div class="container mt-5">
+  <div class="text-center">
+    <h3 class="mb-4 font-weight-bold">Choose Your Branch for Purchase</h3>
+    <p class="lead text-muted">Select a branch below to continue with your purchase. Our branches are here to provide the best service.</p>
+  </div>
+
+  <div class="row justify-content-center">
+    <% @branches.each do |branch| %>
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+          <img src="<%= image_path('med.jpg') %>" class="card-img-top" alt="<%= branch.name %> Branch Image">
+          <div class="card-body text-center">
+            <h5 class="card-title"><%= branch.name %></h5>
+            <p class="card-text text-muted">Address: <%= branch.location %></p>
+            <%= link_to 'Purchase from this Branch', purchase_branch_records_path(branch_id: branch.id), class: 'btn btn-dark' %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="text-center mt-4">
+    <p class="text-muted">We have multiple branches to serve you. Please select the one closest to you.</p>
+  </div>
+</div>

@@ -23,8 +23,12 @@ class MedicinePolicy < ApplicationPolicy
     user.super_admin? || user.branch_admin?
   end
 
+  def expired?
+    user.super_admin?
+  end
+
   def create?
-    user.super_admin? || user.branch_admin?
+    user.branch_admin?
   end
 
   def update?

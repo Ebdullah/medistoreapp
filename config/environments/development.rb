@@ -77,6 +77,17 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :letter_opener
   config.action_mailer.perform_deliveries = true
 
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
 
+
+  config.active_storage.resolve_model_to_route = :rails_storage_proxy
+  config.active_storage.routes_prefix = '/rails/active_storage'
+
+  # config.stripe.secret_key = Rails.application.credentials.stripe[:development][:secret_key]
+  # config.stripe.publishable_key = Rails.application.credentials.stripe[:production][:publishable_key]
+  Rails.application.credentials.dig(:stripe, :publishable_key)
+
+
+
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  config.active_storage.url_options = { host: 'localhost', port: 3000 }
 end

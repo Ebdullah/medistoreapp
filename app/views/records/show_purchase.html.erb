@@ -1,0 +1,64 @@
+<div class="d-flex" style="min-height: 100vh;">
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <!-- Purchase Header -->
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header bg-dark text-white text-center">
+            <h1 class="card-title mb-0">Purchase Details</h1>
+          </div>
+          <div class="card-body">
+            <!-- Customer Details -->
+            <h3 class="mb-4"><%= @record.customer_name %></h3>
+
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <p class="mb-1"><strong>Customer Phone:</strong></p>
+                <h4 class="mb-0"><%= @record.customer_phone %></h4>
+              </div>
+              <div class="col-md-6">
+                <p class="mb-1"><strong>Total Amount:</strong></p>
+                <h4 class="text-success mb-0"><%= number_to_currency(@record.total_amount) %></h4>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-md-12">
+                <p class="mb-1"><strong>Payment Method:</strong></p>
+                <h4 class="mb-0"><%= @record.payment_method.capitalize %></h4>
+              </div>
+            </div>
+
+            <!-- Items Table -->
+            <h2 class="mb-4">Items Purchased</h2>
+            <table class="table table-bordered table-striped">
+              <thead class="thead-dark">
+                <tr>
+                  <th>Medicine</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+              <% @record.record_items.each do |item| %>
+                <tr>
+                  <td><%= item.medicine.name %></td>
+                  <td><%= item.quantity %></td>
+                  <td><%= number_to_currency(item.price) %></td>
+                  <td><%= number_to_currency(item.quantity * item.price) %></td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+
+            <!-- Buttons -->
+            <div class="mt-4 d-flex justify-content-between">
+              <%= link_to 'Back to Purchases', purchase_branch_records_path(@branch), class: 'btn btn-dark' %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

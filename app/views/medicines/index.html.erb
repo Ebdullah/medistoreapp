@@ -1,8 +1,8 @@
-<%= render 'medicines/nav' %>
+<div class="d-flex" style="min-height: 100vh;">
 
 <div class="container mt-5">
   <h3 class="text-center mb-4">Medicine Management</h3>
-
+  <%= render 'medicines/filter' %>
   <table class="table table-hover table-bordered">
     <thead class="table-dark">
       <tr>
@@ -32,7 +32,7 @@
             <% end %>
             
             <% if policy(medicine).destroy? %>
-              <%= link_to 'Delete Medicine', branch_medicine_path(@branch, medicine), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-dark btn-sm' %>
+              <%= button_to 'Delete Medicine', branch_medicine_path(@branch, medicine), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-dark btn-sm' %>
             <% end %>
             </div>
           </td>
@@ -44,6 +44,8 @@
     <%= link_to 'Create New Medicine', new_branch_medicine_path(@branch), class: 'btn btn-dark mb-3 w-100' %>
   <% end %>
 </div>
-  <%= link_to 'Back to Branch', branch_path(@branch), class: 'btn btn-dark mb-2 mt-4 ms-3' %>
+</div>
 
-<%= render 'medicines/footer' %>
+<div class="d-flex justify-content-center">
+  <%= paginate @medicines %>
+</div>

@@ -1,6 +1,6 @@
 <div class="container mt-4">
-  <div class="row justify-content-center"> <!-- Center the card horizontally -->
-    <div class="col-md-6 mb-5"> <!-- Add margin-bottom to the column -->
+  <div class="row justify-content-center"> 
+    <div class="col-md-6 mb-5"> 
       <div class="card shadow p-4"> 
         <h2 class="text-center mb-4">Medicine Form</h2> 
 
@@ -17,25 +17,34 @@
 
           <div class="form-group mb-3">
             <%= form.label :price %>
-            <%= form.text_field :price, class: 'form-control' %>
+            <%= form.number_field :price, class: 'form-control' %>
           </div>
 
           <div class="form-group mb-3">
             <%= form.label :stock_quantity %>
-            <%= form.text_field :stock_quantity, class: 'form-control' %>
+            <%= form.number_field :stock_quantity, class: 'form-control quantity-field', id: 'stockQuantity' %>
+            <div class="invalid-feedback" id="stockQuantityError"><%= @medicine.errors[:stock_quantity].join(', ') if @medicine.errors[:stock_quantity].any? %></div> 
           </div>
+
+          <% today = Date.today %>
+          <% max_date = today + 7.years %>
 
           <div class="form-group mb-3">
             <%= form.label :expiry_date %>
-            <%= form.text_field :expiry_date, class: 'form-control' %>
+            <div class="input-group">
+              <%= form.date_field :expiry_date, 
+                class: 'form-control', 
+                aria: { describedby: 'expiryDateHelp' }, 
+                min: today, 
+                max: max_date %>
+            </div>
           </div>
 
-          <div class="d-flex justify-content-center mt-4"> <!-- Center the submit button -->
+
+          <div class="d-flex justify-content-center mt-4 gap-3">
             <%= form.submit 'Save', class: 'btn btn-dark px-5 py-2' %>
           </div>
         <% end %>
       </div>
     </div>
   </div>
-</div>
-

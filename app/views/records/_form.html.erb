@@ -1,5 +1,4 @@
 <%= form_with model: [@branch, @record], local: true, class: 'p-4' do |form| %>
-  <!-- Section 1: Customer, Cashier, Payment Method -->
   <div class="mb-4 p-3 border rounded bg-light">
     <h5 class="mb-3">Billing Details</h5>
 
@@ -22,13 +21,12 @@
       </div>
 
       <div class="col-md-6">
-        <%= form.label :customer_phone, class: 'form-label' %>
-        <%= form.text_field :customer_phone, class: 'form-control' %>
+        <%= form.label :customer_phone, class: 'form-label' %><br>
+        <%= form.telephone_field :customer_phone, id: 'phone', class: 'form-control' %>
       </div>
     </div>
   </div>
 
-  <!-- Section 2: Medicines and Total Price -->
   <div class="p-3 border rounded bg-light">
     <h5 class="mb-3">Medicine Details</h5>
 
@@ -46,6 +44,7 @@
       <%= form.submit 'Create Bill', class: 'btn btn-dark w-100' %>
     </div>
   </div>
+  <%= link_to 'Back', branch_records_path(@branch), class: 'btn btn-dark mt-4' %>
 
   <!-- JavaScript to handle adding/removing dynamic fields -->
   <script>
@@ -57,13 +56,11 @@
       addMedicineButton.addEventListener('click', function(e) {
         e.preventDefault();
         
-        // Get the template and replace the index in the name and id
         let template = document.getElementById('medicine-template').innerHTML;
         template = template.replace(/RECORD_ITEM_INDEX/g, medicineIndex);
 
         medicinesContainer.insertAdjacentHTML('beforeend', template);
 
-        // Reset the cloned fields' values
         let newFields = medicinesContainer.querySelectorAll('.medicine-fields:last-child');
         newFields.forEach(field => {
           field.querySelectorAll('input').forEach(input => input.value = '');

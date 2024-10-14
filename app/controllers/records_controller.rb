@@ -1,11 +1,12 @@
 class RecordsController < ApplicationController
-  before_action :set_branch
+  before_action :set_branch, only: [:new, :index, :create, :edit, :purchase, :create_purchase, :show, :undo]
   before_action :set_record, only: [:show, :edit, :update, :destroy]
   after_action :verify_authorized
 
   def index
+    per_page = params[:per_page].to_i > 0 ? params[:per_page].to_i : 5
     @records = @branch.records.all
-    @records = policy_scope(Record).where(branch_id: @branch.id)
+    @records = policy_scope(Record.active).where(branch_id: @branch.id).page(params[:page]).per(per_page)
     authorize Record
   end
 
@@ -20,35 +21,35 @@ class RecordsController < ApplicationController
   end
 
   def create
-      ActiveRecord::Base.transaction do
-        customer = User.find_or_create_by!(name: record_params[:customer_name], phone: record_params[:customer_phone]) do |user|
-          user.email = generate_random_email
-          user.password = Devise.friendly_token[0, 20]
-          user.role = :customer
-          user.phone = record_params[:customer_phone]
-        end
-    
-        @record = @branch.records.build(record_params.except(:customer_name, :customer_phone))
-        @record.customer_id = customer.id
-        @record.customer_name = record_params[:customer_name]
-        @record.customer_phone = record_params[:customer_phone]
-    
-        @record.total_amount = calculate_total_amount(@record.record_items)
-        
-        authorize @record
-
-        if @record.save
-          WelcomeEmailJob.perform_later(customer) if customer.created_at == customer.updated_at
-          create_audit_logs
-          redirect_to branch_record_path(@branch, @record), notice: 'Bill was successfully created.'
-        else
-          render :new, status: :unprocessable_entity
-        end
+    ActiveRecord::Base.transaction do
+      customer = User.find_or_create_by!(name: record_params[:customer_name], phone: record_params[:customer_phone]) do |user|
+        user.email = generate_random_email
+        user.password = Devise.friendly_token[0, 20]
+        user.role = :customer
+        user.phone = record_params[:customer_phone]
       end
-    rescue ActiveRecord::RecordInvalid => e
-      flash.now[:alert] = "Error: #{e.message}"
-      render :new
+  
+      @record = @branch.records.build(record_params.except(:customer_name, :customer_phone))
+      @record.customer_id = customer.id
+      @record.customer_name = record_params[:customer_name]
+      @record.customer_phone = record_params[:customer_phone]
+  
+      @record.total_amount = calculate_total_amount(@record.record_items)
+      
+      authorize @record
+
+      if @record.save
+        WelcomeEmailJob.perform_later(customer) if customer.created_at == customer.updated_at
+        create_audit_logs
+        redirect_to branch_record_path(@branch, @record), notice: 'Bill was successfully created.'
+      else
+        render :new, status: :unprocessable_entity
+      end
     end
+  rescue ActiveRecord::RecordInvalid => e
+    flash.now[:alert] = "Error: #{e.message}"
+    render :new
+  end
     
 
   def edit
@@ -66,12 +67,36 @@ class RecordsController < ApplicationController
 
   def destroy
     authorize @record
-    @record.destroy
-    redirect_to branch_records_path(@branch), notice: "Bill was succesfully deleted."
+    @record.archive_record(current_user)
+    @record.soft_delete
+    # @record.destroy!
+    redirect_to branch_records_path(@branch), notice: "Record was successfully archived. "
   end
+
+  def undo
+    @archive = Archive.find_by(record_id: params[:id])
+
+    @record = Record.find_by(id: @archive.record_id)
+    authorize @record
+
+    if @archive
+      if @record
+        @record.restore
+        @archive.destroy
+    
+        redirect_to branch_archives_path(@branch), notice: 'Record was successfully restored.'
+      else
+        redirect_to branch_archives_path(@branch), alert: 'original record not found.'
+      end
+    else
+      redirect_to branch_archives_path(@branch), alert: 'Archive record not found.'
+    end
+  end
+
 
   def pdf
     @record = @branch.records.find(params[:id])
+    authorize @record
   
     pdf = Prawn::Document.new
     pdf.text "Invoice ##{@record.id}", size: 40, style: :bold, align: :center
@@ -90,10 +115,8 @@ class RecordsController < ApplicationController
   
     table_data = [header] + data
   
-    # Define a smaller width for the table (e.g., 80% of the PDF width)
     table_width = pdf.bounds.width * 0.8
   
-    # Center the table using bounding_box with specified width
     pdf.bounding_box([pdf.bounds.left + (pdf.bounds.width - table_width) / 2, pdf.cursor], width: table_width) do
       pdf.table(table_data, header: true, width: table_width) do
         row(0).font_style = :bold
@@ -115,42 +138,168 @@ class RecordsController < ApplicationController
   
     send_data pdf.render, filename: "invoice_#{@record.id}.pdf", type: 'application/pdf', disposition: 'attachment'
   end
-      
-      
 
-    private
+  def select_branch_for_purchase
+    authorize Record, :select_branch_for_purchase?
+    @branches = Branch.all
+  end
+  
+  def purchase
+    @branch = Branch.find(params[:branch_id] || session[:selected_branch_id])
+    @record = @branch.records.build
+    @record.record_items.build
+    session[:selected_branch_id] = @branch.id
+    @medicines = @branch.medicines.where(expired: false)
 
-    def set_branch
-        @branch = Branch.find(params[:branch_id])
-    end
+    authorize Record
+  end
 
-    def set_record
-        @record = @branch.records.find(params[:id])
-    end
+  def create_purchase
+    @branch = Branch.find(params[:branch_id] || session[:selected_branch_id])
+    session[:selected_branch_id] = @branch.id
+    @medicines = @branch.medicines.where(expired: false)
+    
+    @record = @branch.records.new(purchase_params)
+    
+    authorize @record
+    
+    @record.branch = @branch
+    @record.cashier_id = current_user.id
+    @record.customer_id = current_user.id
+    @record.customer_name = params[:customer_name] if params[:customer_name].present?
+    @record.customer_phone = params[:customer_phone] if params[:customer_phone].present?
+    
+    @record.total_amount = calculate_total_amount(@record.record_items)
+  
+    ActiveRecord::Base.transaction do
+      if @record.save
+        if @record.payment_method == 'cash'
+          flash[:notice] = 'Purchase completed successfully with cash.'
+          redirect_to show_purchase_branch_record_path(@branch, @record)
+        else
+          Stripe.api_key = Rails.application.credentials.stripe[:secret_key]
+          
+          stripe_token = params[:record][:stripe_token]
+          stripe_email = params[:record][:stripe_email]
 
-    def record_params
-        params.require(:record).permit(:cashier_id,:customer_id, :customer_name, :customer_phone, :total_amount,:payment_method,record_items_attributes: [:id, :medicine_id, :quantity, :price, :_destroy])
-    end
+          amount_in_cents = (@record.total_amount * 100).to_i
 
-    def generate_random_email
-        "customer_#{SecureRandom.hex(10)}@example.com"
-    end
-
-    def calculate_total_amount(record_items)
-        record_items.sum { |item| item.quantity.to_f * item.price.to_f }
-    end
-
-    def create_audit_logs
-        @record.record_items.each do |item|
-            AuditLog.create!(
-            branch: @branch,
-            cashier: @record.cashier,
-            record: @record,
-            medicine: item.medicine,
-            quantity_sold: item.quantity,
-            total_amount: item.price * item.quantity,
-            audited_from: @record.created_at
-            )
+          payment_method = Stripe::PaymentMethod.create({
+            type: 'card',
+            card: { token: stripe_token },
+          })
+          
+          intent = Stripe::PaymentIntent.create({
+            amount: amount_in_cents,
+            currency: 'usd',
+            payment_method: payment_method.id,
+            receipt_email: stripe_email,
+            confirm: true,
+            automatic_payment_methods: {
+              enabled: true,
+              allow_redirects: "never"
+            },
+            description: 'Medicine purchase',
+          })
+          intent
+  
+          if intent.status == 'succeeded'
+            @record.update(payment_method: 'card')
+            flash[:notice] = 'Purchase completed successfully with card.'
+            redirect_to show_purchase_branch_record_path(@branch, @record)
+          else
+            flash.now[:alert] = 'Payment failed. Please try again.'
+            render :purchase, status: :unprocessable_entity
+          end
         end
+      else
+        flash.now[:alert] = 'Error saving the record. Please check the details and try again.'
+        @branches = Branch.all
+        render :purchase, status: :unprocessable_entity
+      end
     end
+  
+  rescue Stripe::CardError => e
+    flash.now[:alert] = e.message
+    render :purchase, status: :unprocessable_entity
+  rescue ActiveRecord::RecordInvalid => e
+    flash.now[:alert] = "Error: #{e.message}"
+    render :purchase, status: :unprocessable_entity
+  rescue Stripe::StripeError => e
+    flash.now[:alert] = "Stripe error: #{e.message}"
+    render :purchase, status: :unprocessable_entity
+  end
+  
+
+  def show_purchase
+    @branch = Branch.find(params[:branch_id] || session[:selected_branch_id])
+    @record = Record.find(params[:id])
+
+    authorize @record
+  end
+  
+  private
+
+  def set_branch
+    @branch = Branch.find_by(id: params[:branch_id])
+    unless @branch
+      redirect_to branch_records_path(@branch,@record), alert: "Branch not found." # Redirect to an appropriate path
+    end
+  end
+
+  def set_record
+    @branch = Branch.find_by(id: params[:branch_id])
+
+    if params[:id].present?
+      @record = @branch.records.find_by(id: params[:id])
+      if @record.nil?
+        redirect_to branch_records_path(@branch), alert: "Record not found."
+      end
+    else
+      @record = @branch.records.build if action_name.in?(%w[new create purchase create_purchase])
+    end
+  end
+
+  def record_params
+    params.require(:record).permit(
+    :cashier_id,:customer_id, :customer_name,
+    :customer_phone, :total_amount,:payment_method,
+    record_items_attributes: [:id, :medicine_id, :quantity, :price, :_destroy]
+    )
+  end
+
+  def purchase_params
+    params.require(:record).permit(
+      :customer_name,
+      :customer_phone,
+      :payment_method,
+      :house_no,
+      :postal_code,
+      :address,
+      :total_amount, 
+      record_items_attributes: [:medicine_id, :quantity, :price] 
+    )
+  end
+
+  def generate_random_email
+    "customer_#{SecureRandom.hex(10)}@example.com"
+  end
+
+  def calculate_total_amount(record_items)
+      record_items.sum { |item| item.quantity.to_f * item.price.to_f }
+  end
+
+  def create_audit_logs
+      @record.record_items.each do |item|
+          AuditLog.create!(
+          branch: @branch,
+          cashier: @record.cashier,
+          record: @record,
+          medicine: item.medicine,
+          quantity_sold: item.quantity,
+          total_amount: item.price * item.quantity,
+          audited_from: @record.created_at
+          )
+      end
+  end
 end

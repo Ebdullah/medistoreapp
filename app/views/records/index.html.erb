@@ -1,8 +1,7 @@
-<%= render 'records/nav' %>
-
-<div class="container mt-5">
-  <h3 class="text-center mb-4">Records</h3>
-  
+<div class="d-flex" style="min-height: 85vh;">
+<div class="container mt-2">
+  <h3 class="text-center mb-3">Records</h3>
+  <%= render 'records/filter' %>
   <table class="table table-hover table-bordered">
     <thead class="table-dark">
       <tr>
@@ -22,10 +21,16 @@
           <td><%= record.payment_method %></td>
           <td>
             <div class="d-flex gap-3 justify-content-start">
-              <%= link_to 'View Bill', branch_record_path(@branch, record), class: 'btn btn-outline-dark btn-sm px-1' %>
-              <%= link_to 'Edit Bill', edit_branch_record_path(@branch, record), class: 'btn btn-outline-dark btn-sm px-1' %>
               <% if policy(record).destroy? %>
-                <%= link_to 'Delete Bill', branch_record_path(@branch, record), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-dark btn-sm px-1' %>
+              <%= link_to 'View Bill', branch_record_path(@branch, record), class: 'btn btn-outline-dark btn-sm px-1' %>
+              <% end %>
+              <% if policy(record).destroy? %>
+              <% end %>
+              <% if policy(record).edit? %>
+              <%= link_to 'Edit Bill', edit_branch_record_path(@branch, record), class: 'btn btn-outline-dark btn-sm px-1' %>
+              <% end %>
+              <% if policy(record).destroy? %>
+                <%= button_to 'Delete Bill', branch_record_path(@branch, record), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-dark btn-sm px-1' %>
               <% end %>
             </div>
           </td>
@@ -37,10 +42,9 @@
   <%= link_to 'Create Bill', new_branch_record_path(@branch), class: 'btn btn-dark w-100' %>
 <% end %>
 </div>
+</div>
 
-<% if current_user.super_admin? || current_user.branch_admin? %>
-  <%= link_to 'Back', branch_path(@branch), class: 'btn btn-dark px-5 py-2 ms-3 mt-5' %>
-<% end %>
-
-
-<%= render 'records/footer' %>
+<!-- Pagination Controls -->
+<div class="d-flex justify-content-center">
+  <%= paginate @records %>
+</div>

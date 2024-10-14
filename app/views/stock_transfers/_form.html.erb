@@ -39,7 +39,7 @@
                 </div>
               </div>
             </div>
-            <button type="button" id="add-medicine" class="btn btn-secondary mt-3">Add Another Medicine</button>
+            <button type="button" id="add-medicine" class="btn btn-sm btn-secondary mt-3">Add Another Medicine</button>
           </div>
 
           <!-- Submit Button -->
@@ -48,11 +48,10 @@
           </div>
         <% end %>
       </div>
+      <%= link_to 'Back ', branch_stock_transfers_path(@branch), class: 'btn btn-sm btn-dark mt-4' %>
     </div>
   </div>
 </div>
-
-<%= render 'branches/footer' %>
 
 <script>
   document.getElementById('add-medicine').addEventListener('click', function() {

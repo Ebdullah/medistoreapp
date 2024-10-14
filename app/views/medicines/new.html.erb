@@ -1,7 +1,7 @@
-<%= render 'medicines/nav' %>
+<div class="d-flex" style="min-height: 100vh;">
+
 
 <%= render 'form', medicine: @medicine %>
-<%= link_to 'Back', branch_medicines_path(@branch), class: 'btn btn-sm btn-dark ms-3 px-3' %>
+</div>
 
-<%= render 'branches/footer' %>
-
+<%= javascript_pack_tag 'medicine' %>

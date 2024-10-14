@@ -51,6 +51,14 @@ gem 'prawn-table'
 gem 'pundit'
 gem 'letter_opener'
 gem 'sidekiq'
+gem 'kaminari'
+gem 'kaminari-bootstrap'
+
+
+# gem 'sidekiq', '~> 7.3'
+# gem 'sidekiq-scheduler', '~> 5.0'
+
+gem 'activestorage', require: false
 
 
 
@@ -81,6 +89,12 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+
+gem 'whenever', require: false
+gem 'image_processing', '~> 1.2'
+gem 'stripe'
+
 
 
 

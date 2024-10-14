@@ -4,6 +4,7 @@ class BranchesController < ApplicationController
     after_action :verify_policy_scoped, only: :index
 
 
+
     def index
         @branches = Branch.all
         @branches = policy_scope(Branch)
@@ -48,8 +49,8 @@ class BranchesController < ApplicationController
     end
 
     def destroy
-        authorize @branch
         @branch = Branch.find(params[:id])
+        authorize @branch
         @branch.destroy
 
         redirect_to root_path, status: :see_other
@@ -60,4 +61,5 @@ class BranchesController < ApplicationController
     def branch_params
         params.require(:branch).permit(:name,:location)
     end
+
 end

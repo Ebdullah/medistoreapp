@@ -1,27 +1,53 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
-  get 'dashboards/index'
-  root "branches#index"
+  get 'dashboard', to: 'dashboard#index'
+  # root "branches#index"
+  devise_scope :user do
+    root 'users/sessions#new'
+  end
+  devise_for :users, controllers: { registrations: 'users/registrations', sessions: 'users/sessions' }
+  resources :users, only: [:index, :new, :create, :edit, :update, :destroy] do 
+    get 'portal', on: :collection, as: 'portal'
+    get 'profile'
+  end
 
-  devise_for :users
-  resources :users
+
+  get 'select_branch_for_purchase', to: 'records#select_branch_for_purchase'
 
   resources :branches do 
+    resources :archives, only: [:index, :create]
     resources :records do 
+      collection do
+        get :purchase 
+        post :create_purchase
+      end
       member do
+        post :undo, to: 'records#undo'
+        get 'show_purchase'
         get 'pdf'
       end
     end
     resources :audit_logs
-    resources :medicines
+    resources :medicines do
+      member do
+        get :price
+      end
+      collection do
+        get 'expired'
+      end
+    end
     resources :stock_transfers do
       member do
         put :approve
         put :deny
+        get 'pdf'
+        patch :upload_pdf
       end
     end
   end
+
+  resources :notifications, only: [:index, :show, :destroy]
 
   get 'dashboard', to: 'dashboards#index'
 

@@ -1,0 +1,24 @@
+<div class="d-flex" style="min-height: 100vh;">
+
+<div class="container mt-5">
+  <h3 class="text-center mb-4">Notification Details</h3>
+  
+  <div class="notification-details">
+    <p><strong>Notification ID:</strong> <%= @notification.id %></p>
+    <p><strong>Message:</strong> <%= @notification.message %></p>
+    <p><strong>Created At:</strong> <%= @notification.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+    
+    <% if @notification.branch.present? %>
+      <p><strong>Branch:</strong> <%= @notification.branch.name %></p>
+    <% end %>
+
+    <% if @notification.customer.present? %>
+      <p><strong>Request Created By:</strong> <%= @notification.customer.name %></p>
+    <% end %>  
+
+    <div class="mt-4">
+      <%= link_to 'Back to Notifications', notifications_path, class: 'btn btn-dark' %>
+    </div>
+  </div>
+</div>
+</div>

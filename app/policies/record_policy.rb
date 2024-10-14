@@ -26,14 +26,38 @@ class RecordPolicy < ApplicationPolicy
   end
 
   def create?
-    user.super_admin? || (user.branch_admin? || user.cashier?)
+    user.cashier?
   end
 
   def update?
-    user.super_admin? || (user.branch_admin? || (user.cashier? && record.branch_id == user.branch_id))
+    (user.branch_admin? || (user.cashier? && record.branch_id == user.branch_id))
   end
 
   def destroy?
     user.super_admin? || user.branch_admin?
+  end
+
+  def pdf?
+    user.branch_admin?
+  end
+
+  def select_branch_for_purchase?
+    user.customer?
+  end
+
+  def create_purchase?
+    user.customer?
+  end
+
+  def purchase?
+    user.customer?
+  end
+
+  def show_purchase?
+    user.customer?
+  end
+
+  def undo?
+    user.super_admin?
   end
 end

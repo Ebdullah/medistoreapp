@@ -1,18 +1,29 @@
 class UsersController < ApplicationController
   before_action :set_branches
+  # after_action :verify_authorized
+
 
   def index
-    @users = User.all
+    @branches = Branch.all
+    per_page = (params[:per_page] || 5).to_i
+  
+    if params[:branch_id].present? && params[:branch_id] != 'all'
+      @users = User.where(branch_id: params[:branch_id]).page(params[:page]).per(per_page)
+    else
+      @users = User.page(params[:page]).per(per_page)
+    end
   end
-
+  
   def new
     @user = User.new
+    @branches = Branch.all
   end
 
   def create
     @user = User.new(user_params)
     if @user.save
       WelcomeEmailJob.perform_later(@user)
+      Rails.logger.debug("User created: #{@user.inspect}")
       redirect_to users_path, notice: 'User was successfully created.'
     else
       render :new, status: :unprocessable_entity
@@ -43,6 +54,14 @@ class UsersController < ApplicationController
     redirect_to users_path, status: :see_other
   end
 
+  #for user portal
+  def portal
+  end
+
+  def profile
+    @user = User.find(params[:user_id])
+  end
+
 
   private
 
@@ -52,5 +71,10 @@ class UsersController < ApplicationController
 
   def set_branches
     @branches = Branch.all
+  end
+  
+
+  def set_branch
+    @branch = Branch.find(params[:branch_id]) if params[:branch_id].present?
   end
 end

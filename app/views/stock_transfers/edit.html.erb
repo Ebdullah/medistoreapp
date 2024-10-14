@@ -1,4 +1,7 @@
-<%= render 'stock_transfers/nav' %>
-
-<%= render 'stock_transfers/form' %>
-<%= link_to 'Back to Stock Transfers', branch_stock_transfers_path(@branch), class: 'btn btn-secondary' %>
+<div class="d-flex" style="min-height: 100vh;">    
+    <div class="container">
+        <div class="form-container p-4">
+            <%= render 'stock_transfers/form', stock_transfer: @stock_transfer %>
+        </div>   
+    </div>
+</div>

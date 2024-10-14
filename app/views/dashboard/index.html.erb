@@ -1,0 +1,56 @@
+<div class="d-flex">
+  <!-- Main content -->
+  <div class="container-fluid p-4 bg-white">
+    <div class="row mb-4">
+      <h3 class="fw-bold">Dashboard</h3>
+    </div>
+    <div class="row g-3">
+      <!-- Total Users -->
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body text-center">
+            <h6 class="text-muted">Total Users</h6>
+            <h2 class="fw-bold text-primary"><%= @total_users %></h2>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Medicines -->
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body text-center">
+            <h6 class="text-muted">Total Medicines</h6>
+            <h2 class="fw-bold text-success"><%= @total_medicines %></h2>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Branches -->
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body text-center">
+            <h6 class="text-muted">Total Branches</h6>
+            <h2 class="fw-bold text-info"><%= @total_branches %></h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Styles for hover effect -->
+<style>
+  .nav-link:hover {
+    background-color: #343a40 !important;
+    color: #f8f9fa !important;
+  }
+  .nav-link.active {
+  background-color: #007bff; /* Active background color */
+  color: #ffffff; /* Active text color */
+  border-radius: 0.25rem; /* Optional: border-radius for rounded corners */
+}
+
+  .nav-item + .nav-item {
+    border-top: 1px solid #e9ecef;
+  }
+</style>

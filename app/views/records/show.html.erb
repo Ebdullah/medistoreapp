@@ -1,4 +1,4 @@
-<%= render 'records/nav' %>
+<div class="d-flex" style="min-height: 100vh;">
 
 <div class="container mt-5">
   <div class="row">
@@ -50,9 +50,9 @@
           <div class="mt-4 d-flex justify-content-between">
             <%= link_to 'Back', branch_records_path(@branch), class: 'btn btn-dark' %>
             <div>
-              <%= link_to 'Edit', edit_branch_record_path(@branch, @record), class: 'btn btn-outline-dark me-2' %>
+              <%= link_to 'Edit', edit_branch_record_path(@branch, @record), class: 'btn btn-outline-dark me-2' if policy(@record).edit? %>
               <%= link_to 'Destroy', branch_record_path(@branch, @record), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-dark' %>
-              <%= link_to 'Download PDF', pdf_branch_record_path(@branch, @record), class: 'btn btn-success' %>
+              <%= link_to 'Download PDF', pdf_branch_record_path(@branch, @record), class: 'btn btn-success' if policy(@record).pdf? %>
             </div>
           </div>
         </div>
@@ -60,5 +60,5 @@
     </div>
   </div>
 </div>
+</div>
 
-<%= render 'records/footer' %>

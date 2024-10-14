@@ -1,8 +1,7 @@
-<%= render 'records/nav' %>
-
+<div class="d-flex" style="min-height: 100vh;">
   <div class="container">
     <div class="form-container p-4">
-      <h1 class="mb-4 text-center">New Bill</h1>
+      <h1 class="mb-1 text-center">New Bill</h1>
 
         <% if @record.errors.any? %>
           <div class="alert alert-danger">
@@ -16,8 +15,9 @@
         <% end %>
 
       <%= render 'form', record: @record %>
-      <%= link_to 'Back', branch_records_path(@branch), class: 'btn btn-dark px-5 py-2 ms-3 mt-5' %>
     </div>
   </div>
+  </div>
 
-  <%= render 'records/footer' %>
+  <%= javascript_pack_tag 'intl-tel-input' %>
+

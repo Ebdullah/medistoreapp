@@ -1,5 +1,8 @@
 @import "bootstrap";
+@import "~bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css";
 @import 'record';
+@import "~@fortawesome/fontawesome-free/css/all.css"; 
+
 
 body {
 margin: 0;
@@ -30,3 +33,63 @@ background-color: rgba(255, 255, 255, 0.9); /* Light background with slight tran
 margin-bottom: 20px;
 }
     
+
+
+
+// Datepicker field in Medicine/_form.html.erb design
+/* app/assets/stylesheets/application.scss */
+.input-group {
+    position: relative;
+  }
+  
+  .input-group .form-control {
+    border-radius: 0.375rem;
+    padding-right: 2.5rem; /* Space for the icon */
+  }
+  
+  .input-group .input-group-text {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    z-index: 2;
+    background-color: #f8f9fa; /* Light background */
+    border: 1px solid #ced4da;
+    border-left: 0;
+    border-radius: 0;
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .datepicker {
+    z-index: 1050 !important; /* Ensure it appears on top of other elements */
+  }
+  
+  .datepicker-days table {
+    width: 100%;
+  }
+  
+  .datepicker-days th {
+    background-color: #f8f9fa;
+    border: none;
+    color: #495057;
+  }
+  
+  .datepicker-days td {
+    text-align: center;
+  }
+  
+  .datepicker-days td.day:hover,
+  .datepicker-days td.day.active,
+  .datepicker-days td.day.today {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .datepicker-days td.day.disabled {
+    color: #6c757d;
+  }
+  
+// -----------------------------------------------

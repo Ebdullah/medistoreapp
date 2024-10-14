@@ -1,4 +1,10 @@
-<%= render 'branches/nav' %>
+<div class="d-flex" style="min-height: 100vh;">    
+    <div class="container">
+        <div class="form-container p-4">
+            <%= render 'users/form' %>
+        </div>   
+    </div>
+</div>
 
-<%= render 'users/form' %>
-<%= render 'branches/footer' %>
+<%= javascript_pack_tag 'intl-tel-input' %>
+

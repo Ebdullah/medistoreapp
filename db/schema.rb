@@ -10,9 +10,50 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_23_131308) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_14_075546) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "archives", force: :cascade do |t|
+    t.bigint "branch_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "record_id", null: false
+    t.jsonb "record_data"
+    t.datetime "deleted_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["branch_id"], name: "index_archives_on_branch_id"
+    t.index ["record_id"], name: "index_archives_on_record_id"
+    t.index ["user_id"], name: "index_archives_on_user_id"
+  end
 
   create_table "audit_logs", force: :cascade do |t|
     t.bigint "cashier_id", null: false
@@ -36,17 +77,19 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_23_131308) do
     t.string "location"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "branch_admin_id"
   end
 
   create_table "medicines", force: :cascade do |t|
     t.string "name"
     t.text "description"
-    t.decimal "price"
+    t.float "price"
     t.integer "stock_quantity"
     t.date "expiry_date"
     t.bigint "branch_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "expired", default: false
     t.index ["branch_id"], name: "index_medicines_on_branch_id"
   end
 
@@ -55,6 +98,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_23_131308) do
     t.text "message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status"
+    t.bigint "branch_id"
+    t.datetime "read_at"
+    t.index ["branch_id"], name: "index_notifications_on_branch_id"
     t.index ["customer_id"], name: "index_notifications_on_customer_id"
   end
 
@@ -73,12 +120,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_23_131308) do
     t.bigint "customer_id", null: false
     t.bigint "cashier_id", null: false
     t.bigint "branch_id", null: false
-    t.decimal "total_amount"
+    t.float "total_amount"
     t.integer "payment_method"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "customer_name"
     t.string "customer_phone"
+    t.string "house_no"
+    t.string "postal_code"
+    t.string "address"
+    t.datetime "deleted_at"
     t.index ["branch_id"], name: "index_records_on_branch_id"
     t.index ["cashier_id"], name: "index_records_on_cashier_id"
     t.index ["customer_id"], name: "index_records_on_customer_id"
@@ -89,6 +140,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_23_131308) do
     t.bigint "receiving_branch_id", null: false
     t.integer "status", default: 0
     t.jsonb "medicines"
+    t.string "pdf"
     t.index ["receiving_branch_id"], name: "index_stock_transfers_on_receiving_branch_id"
     t.index ["requesting_branch_id"], name: "index_stock_transfers_on_requesting_branch_id"
   end
@@ -102,7 +154,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_23_131308) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "phone"
-    t.integer "role", null: false
+    t.integer "role", default: 3, null: false
     t.bigint "branch_id"
     t.string "name"
     t.index ["branch_id"], name: "index_users_on_branch_id"
@@ -110,11 +162,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_23_131308) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "archives", "branches"
+  add_foreign_key "archives", "records"
+  add_foreign_key "archives", "users"
   add_foreign_key "audit_logs", "branches"
   add_foreign_key "audit_logs", "medicines"
   add_foreign_key "audit_logs", "records"
   add_foreign_key "audit_logs", "users", column: "cashier_id"
   add_foreign_key "medicines", "branches"
+  add_foreign_key "notifications", "branches"
   add_foreign_key "notifications", "users", column: "customer_id"
   add_foreign_key "record_items", "medicines"
   add_foreign_key "record_items", "records"

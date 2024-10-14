@@ -1,0 +1,34 @@
+<div class="d-flex" style="min-height: 85vh;">
+  <div class="container mt-2">
+    <h1 class="text-center mb-4">Archived Records for <%= @branch.name %></h1>
+    <%= render 'archives/filter' %>
+    <table class="table table-hover table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>Record ID</th>
+          <th>User</th>
+          <th>Archived At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @archives.each do |archive| %>
+          <tr>
+            <td><%= archive.record_id %></td>
+            <td><%= archive.user.name %></td>
+            <td><%= archive.deleted_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
+            <td>
+              <div class="d-flex gap-3 justify-content-start">
+                <%= button_to 'Restore', undo_branch_record_path(@branch, archive.record_id), method: :post, data: { confirm: 'Are you sure you want to restore this record?' }, class: 'btn btn-outline-dark btn-sm' %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="d-flex justify-content-center">
+  <%= paginate @archives %>
+</div>

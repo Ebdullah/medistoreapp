@@ -1,0 +1,34 @@
+<div class="d-flex" style="min-height: 100vh;">
+<div class="container mt-5">
+  <h3 class="text-center mb-4">Notifications</h3>
+
+  <% if @notifications.any? %>
+    <table class="table table-hover table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>Notification Message</th>
+          <th>Status</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @notifications.each do |notification| %>
+          <tr>
+            <td>
+              <%= link_to notification_path(notification), class: 'text-dark text-decoration-none' do %>
+                <%= notification.message %>
+              <% end %>
+            </td>
+            <td><%= notification.status.capitalize %></td>
+            <% if policy(Notification).index? %>
+              <td><%= button_to 'Delete', notification_path(notification), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-dark btn-sm'%></td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="text-center">No notifications to display.</p>
+  <% end %>
+</div>
+</div>

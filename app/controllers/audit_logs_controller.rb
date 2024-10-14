@@ -6,7 +6,8 @@ class AuditLogsController < ApplicationController
 
     
     def index
-        @audit_logs = policy_scope(AuditLog)
+        per_page = params[:per_page].to_i > 0 ? params[:per_page].to_i : 5
+        @audit_logs = policy_scope(AuditLog).page(params[:page]).per(per_page)
         authorize @audit_logs
     end
 

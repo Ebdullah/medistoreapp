@@ -9,7 +9,7 @@ class BranchPolicy < ApplicationPolicy
     def resolve
       if user.super_admin?
         scope.all
-      elsif user.branch_admin?
+      elsif user.branch_admin? || user.cashier?
         scope.where(id: user.branch_id)
       else
         scope.none
@@ -18,11 +18,11 @@ class BranchPolicy < ApplicationPolicy
   end
 
   def index?
-    user.super_admin? || user.branch_admin?
+    user.present? && (user.super_admin? || user.branch_admin? || user.cashier?)
   end
 
   def show?
-    user.super_admin? || (user.branch_admin? && user.branch_id == record.id) || user.cashier?
+    user.super_admin? || (user.branch_admin? && user.branch_id == record.id)
   end
   
   def create?

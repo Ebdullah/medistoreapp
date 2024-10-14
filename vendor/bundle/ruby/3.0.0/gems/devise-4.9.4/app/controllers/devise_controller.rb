@@ -47,7 +47,7 @@ class DeviseController < Devise.parent_controller.constantize
   end
 
   protected
-
+  
   # Gets the actual resource stored in the instance variable
   def resource
     instance_variable_get(:"@#{resource_name}")
