@@ -17,7 +17,7 @@ This is a web-based Medical Store Management System built with Ruby on Rails. It
 - **Database**: PostgreSQL
 ## Setup Instructions
 ### 1. Clone the repository
-git clone https://github.com/yahya-tx/Medical-Store-Management.git
+git clone https://github.com/Ebdullah/medistoreapp.git
 cd myapp
 ### 2. Install dependencies
 bash
