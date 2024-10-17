@@ -30,6 +30,7 @@
 
         <!-- Edit Profile Link -->
       <% if current_user.customer? %>
+      <li><%= link_to 'My Purchases', my_purchases_path,  class: "nav-link text-dark #{'active' if current_page?(my_purchases_path)}", style: 'padding: 10px;' %></li>
       <li class="nav-item">
         <%= link_to 'Edit Profile', edit_user_registration_path, class: "nav-link text-dark #{'active' if current_page?(edit_user_registration_path)}", style: 'padding: 10px;' %>
       </li>
@@ -86,6 +87,7 @@
                       <li><%= link_to 'Stock Transfers', branch_stock_transfers_path(branch), class: "nav-link text-dark #{'active' if current_page?(branch_stock_transfers_path(branch))}" if policy(StockTransfer).index? %></li>
                       <li><%= link_to 'Audit Logs', branch_audit_logs_path(branch), class: "nav-link text-dark #{'active' if current_page?(branch_audit_logs_path(branch))}" if policy(AuditLog).index? %></li>
                       <li><%= link_to 'Archived Records', branch_archives_path(branch), class: "nav-link text-dark #{'active' if current_page?(branch_archives_path(branch))}" if current_user.super_admin? %></li>
+                      <li><%= link_to 'Refunds', branch_refunds_path(@branch), class: "nav-link text-dark #{'active' if current_page?(branch_refunds_path(@branch))}" if current_user.branch_admin? %></li>
                     </ul>
                   </div>
                 </li>

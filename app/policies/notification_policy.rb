@@ -9,6 +9,8 @@ class NotificationPolicy < ApplicationPolicy
     def resolve
       if user.branch_admin?
         scope.all
+      elsif user.customer?
+        scope.where(customer_id: user.id)
       else
         scope.none          
       end
@@ -16,14 +18,14 @@ class NotificationPolicy < ApplicationPolicy
   end
 
   def index?
-    user.branch_admin?
+    user.branch_admin? || user.customer?
   end
 
   def show?
-    user.branch_admin?
+    user.branch_admin? || user.customer? 
   end
 
   def destroy?
-    user.branch_admin?
+    user.branch_admin? || user.customer?
   end
 end

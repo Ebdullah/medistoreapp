@@ -7,6 +7,7 @@ class DashboardController < ApplicationController
       @total_medicines = Medicine.where(branch_id: current_user.branch_id).count
       @total_branches = 1
       @branches = Branch.where(id: current_user.branch_id) 
+      @branch = current_user.branch
     else
       @total_users = User.count
       @total_medicines = Medicine.count

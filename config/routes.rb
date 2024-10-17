@@ -14,9 +14,16 @@ Rails.application.routes.draw do
 
 
   get 'select_branch_for_purchase', to: 'records#select_branch_for_purchase'
+  get 'my_purchases', to: 'records#my_purchases', as: 'my_purchases'
 
   resources :branches do 
     resources :archives, only: [:index, :create]
+    resources :refunds, only: [:create, :update, :new, :index] do 
+      member do 
+        put :approve
+        put :deny
+      end
+    end
     resources :records do 
       collection do
         get :purchase 

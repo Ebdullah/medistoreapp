@@ -1,0 +1,42 @@
+<div class="d-flex" style="min-height: 100vh;">
+  <div class="container mt-5">
+    <h3 class="text-center mb-4">Refunds for <%= @branch.name %></h3>
+    <%= render 'refunds/filter' %>
+
+    <table class="table table-hover table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>Refund ID</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <% if current_user.branch_admin? || current_user.super_admin? %>
+          <th>Actions</th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @refunds.each do |refund| %>
+          <tr>
+            <td><%= refund.id %></td>
+            <td><%= number_to_currency(refund.amount) %></td>
+            <td><%= refund.status %></td>
+            <% if current_user.branch_admin? || current_user.super_admin? %>
+            <td>
+            <% if refund.status == 'pending' %>
+              <div class="d-flex gap-2 justify-content-start">
+                <%= button_to 'Approve', approve_branch_refund_path(@branch, refund), method: :put, class: 'btn btn-outline-dark btn-sm', data: { confirm: 'Are you sure you want to approve this refund?' } %>
+                <%= button_to 'Deny', deny_branch_refund_path(@branch, refund), method: :put, class: 'btn btn-outline-dark btn-sm', data: { confirm: 'Are you sure you want to deny this refund?' } %>
+              </div>
+            </td>
+            <% end %>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="d-flex justify-content-center">
+  <%= paginate @refunds %>
+</div>

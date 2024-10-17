@@ -1,0 +1,63 @@
+<div class="d-flex" style="min-height: 100vh;">
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <!-- Refund Request Card -->
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header bg-dark text-white text-center">
+            <h1 class="card-title mb-0">Request Refund</h1>
+          </div>
+          <div class="card-body">
+            <h4 class="mb-4">ID: <%= @record.id%></h4>
+            <h3 class="mb-4">Medicines</h3>
+            <!-- Medicines Table -->
+            <table class="table table-bordered table-striped mb-4">
+              <thead class="thead-dark">
+                <tr>
+                  <th>ID</th>
+                  <th>Medicine Name</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% total_amount = 0 %>
+                <% @record.record_items.each do |record_item| %>
+                  <tr>
+                    <td><%= record_item.medicine.id %></td>
+                    <td><%= record_item.medicine.name %></td>
+                    <td><%= record_item.quantity %></td>
+                    <td><%= number_to_currency(record_item.price) %></td>
+                  </tr>
+                  <% total_amount += record_item.price * record_item.quantity %>
+                <% end %>
+              </tbody>
+            </table>
+
+            <!-- Total Amount -->
+            <div class="mb-4">
+              <strong>Total Amount:</strong>
+              <h4 class="text-success"><%= number_to_currency(total_amount) %></h4>
+            </div>
+
+            <!-- Refund Form -->
+            <h4 class="mb-4">Refund Details</h4>
+            <%= form_with model: @refund, url: branch_refunds_path(@branch.id), local: true do |f| %>
+            <%= f.hidden_field :record_id, value: @record.id %> 
+              <div class="form-group mb-3">
+                <%= f.label :amount, "Refund Amount" %>
+                <%= f.number_field :amount, value: total_amount, class: 'form-control', readonly: true %>
+              </div>
+              <div class="form-group">
+                <%= f.submit 'Submit Refund', class: 'btn btn-dark' %>
+              </div>
+            <% end %>
+
+            <!-- Cancel Button -->
+            <%= link_to 'Cancel', my_purchases_path, class: 'btn btn-secondary mt-3' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

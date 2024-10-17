@@ -80,10 +80,19 @@ document.addEventListener('DOMContentLoaded', function() {
             updateTotalAmount();
             updateMedicineSelectOptions(); // Update the select options
         });
+
+
+    $(medicineSelect).on('select2:open', function() {
+        setTimeout(function() {
+            $('.select2-search__field').attr('placeholder', 'Search Medicine'); // Add the placeholder here
+        }, 0);
+    })
     }
 
     // Initialize Select2 for the initial medicine select
     const initialMedicineSelect = $('.select2-medicine');
+
+    
     if (initialMedicineSelect) {
         initialMedicineSelect.select2({
             data: medicinesData.map(medicine => ({ id: medicine.id, text: medicine.name })),

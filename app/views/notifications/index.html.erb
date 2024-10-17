@@ -17,6 +17,7 @@
             <td>
               <%= link_to notification_path(notification), class: 'text-dark text-decoration-none' do %>
                 <%= notification.message %>
+                <p><%= time_ago_in_words(notification.created_at) %> ago</p>
               <% end %>
             </td>
             <td><%= notification.status.capitalize %></td>

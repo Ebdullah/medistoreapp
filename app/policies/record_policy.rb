@@ -38,7 +38,7 @@ class RecordPolicy < ApplicationPolicy
   end
 
   def pdf?
-    user.branch_admin?
+    user.branch_admin? || user.customer?
   end
 
   def select_branch_for_purchase?
@@ -59,5 +59,9 @@ class RecordPolicy < ApplicationPolicy
 
   def undo?
     user.super_admin?
+  end
+
+  def my_purchases?
+    user.customer?
   end
 end

@@ -55,6 +55,7 @@
             <!-- Buttons -->
             <div class="mt-4 d-flex justify-content-between">
               <%= link_to 'Back to Purchases', purchase_branch_records_path(@branch), class: 'btn btn-dark' %>
+              <%= link_to 'Download PDF', pdf_branch_record_path(@branch, @record), class: 'btn btn-success' if policy(@record).pdf? %>
             </div>
           </div>
         </div>

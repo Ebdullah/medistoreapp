@@ -1,10 +1,11 @@
 class Record < ApplicationRecord
-  belongs_to :customer, class_name: 'User'
+  belongs_to :customer, class_name: 'User', foreign_key: 'customer_id'
   belongs_to :cashier, class_name: 'User'
   belongs_to :branch
   has_many :record_items, dependent: :destroy
   has_many :audit_logs, dependent: :destroy
   has_many :archives
+  has_many :refunds
   enum payment_method: [ :cash, :card]
 
   scope :active, -> {where(deleted_at: nil)}

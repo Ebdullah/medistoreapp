@@ -1,0 +1,98 @@
+<div class="d-flex" style="min-height: 100vh;">
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-10 offset-md-1">
+
+      <div class="d-flex align-items-center justify-content-between">
+        <%= render 'records/purchases_filter' %>
+
+        <!-- Search Filter -->
+        <div class="d-flex ms-auto mt-3 mb-4"> 
+          <form class="form-inline" method="get" action="<%= my_purchases_path %>">
+            <div class="d-flex">
+              <div class="me-2"> 
+                <input type="text" class="form-control" name="search" placeholder="Search by medicine name" value="<%= params[:search] %>">
+              </div>
+              <div>
+                <button type="submit" class="btn btn-sm btn-dark py-2">Search Here</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+
+        <!-- My Purchases Header -->
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header bg-dark text-white text-center">
+            <h1 class="card-title mb-0">My Purchase History</h1>
+          </div>
+          <div class="card-body">
+            <table class="table table-bordered table-striped w-100">
+              <thead class="thead-dark">
+                <tr>
+                  <th>SKU</th>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Medicine</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @purchases.each do |purchase| %>
+                  <% purchase.record_items.each do |record_item| %>
+                    <tr class="purchase-record" 
+                        data-branch-id="<%= record_item.record.branch_id %>"
+                        data-record-items="<%= purchase.record_items.to_json %>"
+                        data-record-id="<%= record_item.record_id %>"
+                        data-customer-name="<%= purchase.customer_name %>" 
+                        data-customer-phone="<%= purchase.customer_phone %>" 
+                        data-medicine-name="<%= record_item.medicine.name %>" 
+                        data-quantity="<%= record_item.quantity %>" 
+                        data-price="<%= record_item.price %>"
+                        data-total="<%= number_to_currency(record_item.quantity * record_item.price) %>">
+                      <td><%= record_item.medicine.sku %></td> 
+                      <td><%= purchase.customer_name %></td>
+                      <td><%= purchase.customer_phone %></td>
+                      <td><%= record_item.medicine.name %></td>
+                      <td><%= record_item.quantity %></td>
+                      <td><%= number_to_currency(record_item.price) %></td>
+                      <td><%= number_to_currency(record_item.quantity * record_item.price) %></td>
+                    </tr>
+                  <% end %>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-center">
+  <%= paginate @purchases %>
+</div>
+
+<!-- Billing Details Modal -->
+<div class="modal fade" id="billingDetailsModal" tabindex="-1" role="dialog" aria-labelledby="billingDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="billingDetailsModalLabel">Purchase Details</h5>
+      </div>
+      <div class="modal-body" id="billing-details-content">
+        <!-- Billing details will be populated here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="refundButton">Refund</button> 
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<%= javascript_pack_tag 'modal' %>

@@ -4,7 +4,7 @@ class NotificationsController < ApplicationController
     before_action :authorize_notifications
   
     def index
-        @notifications = policy_scope(Notification).order(created_at: :desc)
+        @notifications = policy_scope(current_user.notifications).order(created_at: :desc)
     end
 
     def show

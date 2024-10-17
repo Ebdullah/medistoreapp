@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_14_075546) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_16_112432) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -90,6 +90,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_14_075546) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "expired", default: false
+    t.string "sku"
     t.index ["branch_id"], name: "index_medicines_on_branch_id"
   end
 
@@ -130,9 +131,21 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_14_075546) do
     t.string "postal_code"
     t.string "address"
     t.datetime "deleted_at"
+    t.string "payment_intent_id"
     t.index ["branch_id"], name: "index_records_on_branch_id"
     t.index ["cashier_id"], name: "index_records_on_cashier_id"
     t.index ["customer_id"], name: "index_records_on_customer_id"
+  end
+
+  create_table "refunds", force: :cascade do |t|
+    t.bigint "record_id", null: false
+    t.integer "status", default: 0
+    t.float "amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "branch_id"
+    t.integer "customer_id"
+    t.index ["record_id"], name: "index_refunds_on_record_id"
   end
 
   create_table "stock_transfers", force: :cascade do |t|
@@ -179,6 +192,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_14_075546) do
   add_foreign_key "records", "branches"
   add_foreign_key "records", "users", column: "cashier_id"
   add_foreign_key "records", "users", column: "customer_id"
+  add_foreign_key "refunds", "records"
   add_foreign_key "stock_transfers", "branches", column: "receiving_branch_id"
   add_foreign_key "stock_transfers", "branches", column: "requesting_branch_id"
 end

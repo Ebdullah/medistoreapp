@@ -2,6 +2,7 @@
 import $ from 'jquery';
 window.$ = $;
 import Rails from "@rails/ujs"
+Rails.start()
 import Turbolinks from "turbolinks"
 import * as ActiveStorage from "@rails/activestorage"
 import 'bootstrap';

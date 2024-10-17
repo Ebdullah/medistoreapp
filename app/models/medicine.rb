@@ -3,6 +3,7 @@ class Medicine < ApplicationRecord
   has_many :record_items
   has_many :audit_logs
 
+  validates :sku, presence: true, uniqueness: true
   validates :name, :price, :stock_quantity, :expiry_date, presence: true
   validates :name, uniqueness: { 
     scope: :branch_id, 

@@ -81,6 +81,6 @@ class MedicinesController < ApplicationController
     end
 
     def medicine_params
-        params.require(:medicine).permit(:name,:description,:price,:stock_quantity,:expiry_date, :expired)
+        params.require(:medicine).permit(:name,:description,:price,:stock_quantity,:expiry_date,:expired, :sku)
     end
 end

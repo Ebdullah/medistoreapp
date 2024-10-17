@@ -1,5 +1,5 @@
 class RecordsController < ApplicationController
-  before_action :set_branch, only: [:new, :index, :create, :edit, :purchase, :create_purchase, :show, :undo]
+  before_action :set_branch, only: [:new, :index, :create, :edit, :purchase, :create_purchase, :show, :undo, :pdf]
   before_action :set_record, only: [:show, :edit, :update, :destroy]
   after_action :verify_authorized
 
@@ -69,7 +69,6 @@ class RecordsController < ApplicationController
     authorize @record
     @record.archive_record(current_user)
     @record.soft_delete
-    # @record.destroy!
     redirect_to branch_records_path(@branch), notice: "Record was successfully archived. "
   end
 
@@ -144,6 +143,20 @@ class RecordsController < ApplicationController
     @branches = Branch.all
   end
   
+
+  def my_purchases
+    per_page = params[:per_page].to_i > 0 ? params[:per_page].to_i : 5
+
+    @purchases = Record.where(customer_id: current_user.id).includes(record_items: :medicine).page(params[:page]).per(per_page)
+    
+    if params[:search].present?
+      @purchases = @purchases.joins(record_items: :medicine)
+                             .where('medicines.name ILIKE ?', "%#{params[:search]}%")
+                             .distinct.order(created_at: :desc)
+    end
+    authorize Record
+  end
+
   def purchase
     @branch = Branch.find(params[:branch_id] || session[:selected_branch_id])
     @record = @branch.records.build
@@ -201,7 +214,8 @@ class RecordsController < ApplicationController
             },
             description: 'Medicine purchase',
           })
-          intent
+          
+          @record.payment_intent_id = intent.id
   
           if intent.status == 'succeeded'
             @record.update(payment_method: 'card')
@@ -236,6 +250,26 @@ class RecordsController < ApplicationController
     @record = Record.find(params[:id])
 
     authorize @record
+      # Fetch the associated record items to include in the response
+    @record_items = @record.record_items.includes(:medicine).select(:medicine_id, :quantity, :price)
+
+    # Respond with JSON if it's an AJAX request
+    respond_to do |format|
+      format.html # For standard HTML requests (if you need a full view)
+      format.json do
+        render json: {
+          customer_name: @record.customer.name,
+          customer_phone: @record.customer.phone,
+          record_items: @record_items.map do |item|
+            {
+              medicine_name: item.medicine.name,
+              quantity: item.quantity,
+              price: item.price
+            }
+          end
+        }
+      end
+    end
   end
   
   private
