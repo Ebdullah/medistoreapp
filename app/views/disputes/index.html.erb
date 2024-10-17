@@ -1,0 +1,80 @@
+<div class="d-flex" style="min-height: 100vh;">
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-10 offset-md-1">
+        
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <h1 class="mb-0">Disputes</h1>
+
+          <!-- Search Filter -->
+          <div class="d-flex ms-auto">
+              <div class="d-flex">
+                <div class="me-2"> 
+                </div>
+                <div>
+                </div>
+              </div>
+          </div>
+        </div>
+
+        <!-- Disputes Header -->
+        <%= render 'disputes/filter' %>
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header bg-dark text-white text-center">
+            <h2 class="card-title mb-0">Dispute List</h2>
+          </div>
+          <div class="card-body">
+            <% if @disputes.any? %>
+              <div class="list-group">
+                <% @disputes.each do |dispute| %>
+                  <div class="list-group-item">
+                    <div class="d-flex flex-column">
+                      <div>
+                        <small><strong>ID:</strong> <%= dispute.id %></small><br>
+                        <strong>Reason:</strong> <%= dispute.reason %>
+                      </div>
+                      <div>
+                        <strong>Status:</strong> <%= dispute.status.present? ? dispute.status : "Not specified" %>
+                      </div>
+                      <% if dispute.pdf.attached? %>
+                        <div>
+                          <%= link_to 'View PDF', url_for(dispute.pdf), target: '_blank', class: 'btn btn-success btn-sm' %>
+                        </div>
+                      <% else %>
+                        <div>No PDF uploaded.</div>
+                      <% end %>
+                      <div class="mt-2">
+                        <small><strong>Created at:</strong> <%= dispute.created_at.strftime("%B %d, %Y %I:%M %p") %></small>
+                      </div>
+                    </div>
+                    <% if dispute.status == 'pending' %>
+                    <div class="d-flex gap-2">
+                        <%= button_to 'Mark as Failed', failed_branch_dispute_path(dispute.branch, dispute), 
+                                    method: :put, 
+                                    class: 'btn btn-outline-dark btn-sm', 
+                                    data: { confirm: 'Are you sure you want to mark this dispute as failed?' } %>
+
+                        <%= button_to 'Mark as Won', won_branch_dispute_path(dispute.branch, dispute), 
+                                    method: :put, 
+                                    class: 'btn btn-outline-dark btn-sm', 
+                                    data: { confirm: 'Are you sure you want to mark this dispute as won?' } %>
+                    </div>
+                    <% end %>
+                    <hr>
+                    <%= link_to "View Details", branch_dispute_path(dispute.branch, dispute), class: 'btn btn-dark btn-sm d-block mt-2' %>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <p class="text-center">No disputes found.</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-center">
+  <%= paginate @disputes %>
+</div>

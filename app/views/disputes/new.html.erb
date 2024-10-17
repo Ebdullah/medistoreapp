@@ -1,0 +1,38 @@
+<div class="d-flex" style="min-height: 100vh;">
+  <div class="container mt-5 py-2">
+    <!-- Dispute Form Card -->
+    <div class="card shadow-sm p-3 mb-5" style="width: 400px; margin: auto;">
+      <h5 class="card-header text-center text-light bg-dark mb-3">
+        Create Dispute
+      </h5>
+
+      <%= form_with(model: [@branch, @dispute], local: true, html: { multipart: true }) do |form| %>
+      <div class="card-body">
+        <%= form.hidden_field :record_id, value: params[:record_id] %>
+
+        <div class="mb-3">
+          <%= form.label :reason, "Reason for Dispute", class: "form-label" %>
+          <%= form.text_area :reason, class: "form-control", rows: 4 %>
+        </div>
+
+        <!-- PDF Upload Section -->
+        <div class="card shadow-sm p-3 mb-3">
+          <h6 class="card-header text-center text-light bg-secondary">
+            Upload PDF
+          </h6>
+          <div class="card-body">
+            <div class="mb-3">
+              <%= form.label :pdf, "Select PDF to Upload", class: "form-label" %>
+              <%= form.file_field :pdf, class: "form-control" %>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-center">
+          <%= form.submit "Create Dispute", class: "btn btn-sm btn-dark py-2 px-4" %>
+        </div>
+      </div>
+      <% end %>
+    </div>
+  </div>
+</div>

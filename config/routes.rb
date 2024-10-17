@@ -17,6 +17,12 @@ Rails.application.routes.draw do
   get 'my_purchases', to: 'records#my_purchases', as: 'my_purchases'
 
   resources :branches do 
+    resources :disputes do 
+      member do 
+        put :failed
+        put :won
+      end
+    end
     resources :archives, only: [:index, :create]
     resources :refunds, only: [:create, :update, :new, :index] do 
       member do 

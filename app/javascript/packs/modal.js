@@ -42,7 +42,6 @@ $(document).ready(function() {
                 </tbody>
             </table>
             <input type="hidden" id="recordId" value="${recordId}" /> <!-- Store record ID in hidden input -->
-            <button id="downloadReceipt" class="btn btn-success">Download Receipt</button>
         `;
 
         $('#billing-details-content').html(content);
@@ -54,10 +53,6 @@ $(document).ready(function() {
 
     $('#refundButton').on('click', function() {
         // No need for any additional logic here as the amount is set when the billing modal is clicked
-    });
-
-    $('#pdf-download').on('click', function(){
-
     });
 
     $('.close, .btn-secondary').on('click', function() {

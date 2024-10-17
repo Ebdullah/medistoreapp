@@ -38,6 +38,7 @@
                   <th>Quantity</th>
                   <th>Price</th>
                   <th>Total</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -60,6 +61,10 @@
                       <td><%= record_item.quantity %></td>
                       <td><%= number_to_currency(record_item.price) %></td>
                       <td><%= number_to_currency(record_item.quantity * record_item.price) %></td>
+                      <td>
+                        <%= link_to 'Create Dispute', new_branch_dispute_path(record_item.record.branch, record_id: record_item.record.id), class: "btn btn-sm btn-warning" %>
+                        <%= link_to 'Download PDF', pdf_branch_record_path(record_item.record.branch, id: record_item.record.id), class: 'btn btn-sm btn-success' %>
+                      </td>
                     </tr>
                   <% end %>
                 <% end %>

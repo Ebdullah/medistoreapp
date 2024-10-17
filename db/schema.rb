@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_16_112432) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_17_100557) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -78,6 +78,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_16_112432) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "branch_admin_id"
+  end
+
+  create_table "disputes", force: :cascade do |t|
+    t.bigint "branch_id", null: false
+    t.bigint "record_id", null: false
+    t.string "reason", null: false
+    t.integer "status", default: 0
+    t.string "pdf"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["branch_id"], name: "index_disputes_on_branch_id"
+    t.index ["record_id"], name: "index_disputes_on_record_id"
   end
 
   create_table "medicines", force: :cascade do |t|
@@ -184,6 +196,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_16_112432) do
   add_foreign_key "audit_logs", "medicines"
   add_foreign_key "audit_logs", "records"
   add_foreign_key "audit_logs", "users", column: "cashier_id"
+  add_foreign_key "disputes", "branches"
+  add_foreign_key "disputes", "records"
   add_foreign_key "medicines", "branches"
   add_foreign_key "notifications", "branches"
   add_foreign_key "notifications", "users", column: "customer_id"

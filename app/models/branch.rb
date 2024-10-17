@@ -5,7 +5,7 @@ class Branch < ApplicationRecord
     has_many :records, dependent: :destroy
     has_many :audit_logs, dependent: :destroy
     has_many :archives, dependent: :destroy
-
+    has_many :disputes, dependent: :destroy
 
     has_many :notifications, dependent: :destroy
 

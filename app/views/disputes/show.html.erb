@@ -1,0 +1,36 @@
+<div class="d-flex" style="min-height: 100vh;">
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header bg-dark text-white text-center">
+            <h1 class="card-title mb-0">Dispute Details</h1>
+          </div>
+          <div class="card-body">
+            <p>
+              <strong>Reason for Dispute:</strong>
+              <%= @dispute.reason %>
+            </p>
+
+            <p>
+              <strong>Status:</strong>
+              <%= @dispute.status || "Not specified" %>
+            </p>
+
+            <% if @dispute.pdf.attached? %>
+              <p>
+                <%= link_to 'View PDF', url_for(@dispute.pdf), target: '_blank', class: 'btn btn-success' %>
+              </p>
+            <% else %>
+              <p>No PDF uploaded.</p>
+            <% end %>
+
+            <div class="mt-4 d-flex justify-content-between">
+              <%= link_to 'Back to Disputes', branch_disputes_path(@branch), class: "btn btn-secondary" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
